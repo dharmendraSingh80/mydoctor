@@ -1,0 +1,56 @@
+.icon {
+    width: 10rem;
+    max-height: 2.5rem;
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: white;
+
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+}
+
+.menuContainer {
+    display: flex;
+    align-items: center;
+}
+
+.menuIcon {
+    display: none;
+    /* Hide the menu icon by default */
+}
+
+.centerContainer {
+    display: flex;
+    align-items: center;
+    width: 500px
+}
+
+.searchBar {
+    /* margin-left: 9.5rem; */
+    width: 50%;
+}
+
+.dropdown {
+    /* min-width: 150px; */
+    width: 50%;
+}
+
+/* Media query for medium screens */
+@media (max-width: 960px) {
+
+
+    .menuIcon {
+        display: block;
+        /* Show the menu icon on medium screens */
+        margin-left: auto;
+        /* Push the menu icon to the right */
+    }
+}
