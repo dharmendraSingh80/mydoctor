@@ -11,7 +11,7 @@ function LoginForm() {
   };
 
   return (
-    <Container maxWidth="sm" sx={{ boxShadow: 2, p: 4 }}>
+    <Container sx={{ boxShadow: 2, p: 4 }}>
       <Box
         sx={{
           display: "flex",
@@ -53,7 +53,7 @@ function LoginForm() {
               color="primary"
               sx={{ mt: 3, mb: 2 }}
             >
-              Sign In
+              LOGIN
             </Button>
             <a href="/">Forget password</a>
           </Box>

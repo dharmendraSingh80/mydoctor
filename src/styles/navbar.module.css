@@ -7,7 +7,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 20px;
+    padding: 1rem 2rem;
     background-color: white;
 
 }
@@ -30,7 +30,6 @@
 .centerContainer {
     display: flex;
     align-items: center;
-    width: 500px
 }
 
 .searchBar {
@@ -43,8 +42,24 @@
     width: 50%;
 }
 
+.serviceDoctorsContainer {
+    display: flex;
+    justify-content: center;
+}
+
 /* Media query for medium screens */
 @media (max-width: 960px) {
+
+    .logo {
+        display: none;
+    }
+
+    .centerContainer {
+        display: block;
+    }
+
+
+
 
 
     .menuIcon {
