@@ -1,7 +1,5 @@
 # Todays Work
-
-![Screenshot (69)](https://github.com/dharmendraSingh80/mydoctor/assets/114590452/9c1eda67-6fee-4bb5-ae7e-8b271b8a74e8)
-
+![Screenshot (70)](https://github.com/dharmendraSingh80/mydoctor/assets/114590452/768f7f24-5601-42b0-8e3a-c39a71bde4e5)
 
 
 # Getting Started with Create React App
