@@ -10,6 +10,7 @@ import styles from "../styles/login.module.css";
 import loginIcon from "../myIcon/login.svg";
 import patientRegisterImage from "../myIcon/final registration.svg";
 import PatientRegistrationForm from "./pages/PatientRegistrationForm";
+import DoctorSignUpForm from "./pages/DoctorSignUp";
 
 export default function LabTabs() {
   const [value, setValue] = React.useState("1");
@@ -86,7 +87,9 @@ export default function LabTabs() {
           <TabPanel sx={{ p: 0, pt: 4 }} value="2">
             <PatientRegistrationForm />
           </TabPanel>
-          <TabPanel value="3">Item Three</TabPanel>
+          <TabPanel sx={{ p: 0, pt: 4 }} value="3">
+            <DoctorSignUpForm />
+          </TabPanel>
         </Box>
       </Box>
     </TabContext>

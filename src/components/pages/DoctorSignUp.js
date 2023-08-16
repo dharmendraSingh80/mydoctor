@@ -10,13 +10,10 @@ import CheckCircleOutlineOutlinedIcon from "@mui/icons-material/CheckCircleOutli
 import CircleOutlinedIcon from "@mui/icons-material/CircleOutlined";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 
-const RegistrationForm = () => {
+const DoctorSignUpForm = () => {
   const [formData, setFormData] = useState({
     fullName: "",
     gender: "male",
-    day: "",
-    month: "",
-    year: "",
     mobileNumber: "",
     email: "",
     password: "",
@@ -64,7 +61,6 @@ const RegistrationForm = () => {
 
   const validateInput = (e) => {
     let { name, value } = e.target;
-
     setInputErrors((prev) => {
       const stateObj = { ...prev, [name]: "" };
 
@@ -72,22 +68,16 @@ const RegistrationForm = () => {
         case "fullName":
           if (!value) {
             stateObj[name] = "Please enter a valid name!";
-          } else {
-            stateObj[name] = "";
           }
           break;
         case "mobileNumber":
           if (!value || !/^[0-9]{10}$/.test(value)) {
             stateObj[name] = "Please enter a valid 10-digit mobile number!";
-          } else {
-            stateObj[name] = "";
           }
           break;
         case "email":
           if (!value || !/\S+@\S+\.\S+/.test(value)) {
             stateObj[name] = "Please enter a valid e-mail address!";
-          } else {
-            stateObj[name] = "";
           }
           break;
 
@@ -96,7 +86,6 @@ const RegistrationForm = () => {
             stateObj[name] = "Password cannot be empty!";
           } else {
             validatePassword(value);
-            stateObj[name] = "";
           }
           break;
 
@@ -107,9 +96,6 @@ const RegistrationForm = () => {
             setPasswordChecks((prev) => {
               return { ...prev, match: "checked" };
             });
-            stateObj[name] = "";
-          } else {
-            stateObj[name] = "";
           }
           break;
 
@@ -190,20 +176,6 @@ const RegistrationForm = () => {
     });
   };
 
-  const months = [
-    { value: "01", label: "January" },
-    { value: "02", label: "February" },
-    { value: "03", label: "March" },
-    // ... and so on for all months
-  ];
-
-  const years = [
-    { value: "2022", label: "2022" },
-    { value: "2021", label: "2021" },
-    { value: "2020", label: "2020" },
-    // ... and so on for all years
-  ];
-
   return (
     <div className={styles.registration_form_container}>
       <h2 className={styles.form_title}>Create An Account</h2>
@@ -253,55 +225,7 @@ const RegistrationForm = () => {
             </RadioGroup>
           </FormControl>
         </div>
-        <div className={styles.registration_form_child}>
-          <label className={styles.label_tag}>Date of Birth*</label>
-          <div>
-            <select
-              name="day"
-              value={formData.day}
-              onChange={handleInputChange}
-              className={styles.input_DOB}
-              required
-            >
-              <option value="">Day</option>
-              {/* Add options for days */}
-              {Array.from({ length: 31 }, (_, index) => (
-                <option key={index + 1} value={index + 1}>
-                  {index + 1}
-                </option>
-              ))}
-            </select>
 
-            <select
-              name="month"
-              value={formData.month}
-              onChange={handleInputChange}
-              className={styles.input_DOB}
-              required
-            >
-              <option value="">Month</option>
-              {months.map((month) => (
-                <option key={month.value} value={month.value}>
-                  {month.label}
-                </option>
-              ))}
-            </select>
-            <select
-              name="year"
-              value={formData.year}
-              onChange={handleInputChange}
-              className={styles.input_DOB}
-              required
-            >
-              <option value="">Year</option>
-              {years.map((year) => (
-                <option key={year.value} value={year.value}>
-                  {year.label}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
         <div className={styles.registration_form_child}>
           <label className={styles.label_tag}>Mobile Number*</label>
           <input
@@ -445,7 +369,7 @@ const RegistrationForm = () => {
           type="submit"
           variant="contained"
           onClick={handleSubmit}
-          disabled={Object.keys(inputErrors).length !== 0}
+          disabled={Object.values(inputErrors).length !== 0}
         >
           REGISTER
         </Button>
@@ -457,4 +381,4 @@ const RegistrationForm = () => {
   );
 };
 
-export default RegistrationForm;
+export default DoctorSignUpForm;
