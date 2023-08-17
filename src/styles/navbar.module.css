@@ -3,13 +3,19 @@
     max-height: 2.5rem;
 }
 
+.nav_wrapper {
+    position: fixed;
+    width: 100%;
+    z-index: 1201;
+    top: 0;
+}
+
 .navbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 1rem 2rem;
     background-color: white;
-
 }
 
 .logo {
@@ -45,7 +51,10 @@
 .serviceDoctorsContainer {
     display: flex;
     justify-content: center;
+    background-color: #fafafa;
 }
+
+
 
 /* Media query for medium screens */
 @media (max-width: 960px) {
@@ -57,9 +66,6 @@
     .centerContainer {
         display: block;
     }
-
-
-
 
 
     .menuIcon {

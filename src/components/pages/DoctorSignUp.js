@@ -61,6 +61,7 @@ const DoctorSignUpForm = () => {
 
   const validateInput = (e) => {
     let { name, value } = e.target;
+
     setInputErrors((prev) => {
       const stateObj = { ...prev, [name]: "" };
 
@@ -68,16 +69,22 @@ const DoctorSignUpForm = () => {
         case "fullName":
           if (!value) {
             stateObj[name] = "Please enter a valid name!";
+          } else {
+            stateObj[name] = "";
           }
           break;
         case "mobileNumber":
           if (!value || !/^[0-9]{10}$/.test(value)) {
             stateObj[name] = "Please enter a valid 10-digit mobile number!";
+          } else {
+            stateObj[name] = "";
           }
           break;
         case "email":
           if (!value || !/\S+@\S+\.\S+/.test(value)) {
             stateObj[name] = "Please enter a valid e-mail address!";
+          } else {
+            stateObj[name] = "";
           }
           break;
 
@@ -86,6 +93,7 @@ const DoctorSignUpForm = () => {
             stateObj[name] = "Password cannot be empty!";
           } else {
             validatePassword(value);
+            stateObj[name] = "";
           }
           break;
 
@@ -96,6 +104,12 @@ const DoctorSignUpForm = () => {
             setPasswordChecks((prev) => {
               return { ...prev, match: "checked" };
             });
+            stateObj[name] = "";
+          } else {
+            setPasswordChecks((prev) => {
+              return { ...prev, match: "unchecked" };
+            });
+            stateObj[name] = "";
           }
           break;
 
@@ -369,7 +383,21 @@ const DoctorSignUpForm = () => {
           type="submit"
           variant="contained"
           onClick={handleSubmit}
-          disabled={Object.values(inputErrors).length !== 0}
+          disabled={
+            !(
+              passwordChecks.lowercase === "checked" &&
+              passwordChecks.match === "checked" &&
+              passwordChecks.uppercase === "checked" &&
+              passwordChecks.number === "checked" &&
+              passwordChecks.passwordLength === "checked" &&
+              passwordChecks.specialChar === "checked" &&
+              inputErrors.fullName === "" &&
+              inputErrors.mobileNumber === "" &&
+              inputErrors.email === "" &&
+              inputErrors.password === "" &&
+              inputErrors.confirmPassword === ""
+            )
+          }
         >
           REGISTER
         </Button>

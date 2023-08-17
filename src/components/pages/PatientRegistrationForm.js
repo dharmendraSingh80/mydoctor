@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "../../styles/patient_register.module.css";
 import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
@@ -9,6 +9,7 @@ import FormLabel from "@mui/material/FormLabel";
 import CheckCircleOutlineOutlinedIcon from "@mui/icons-material/CheckCircleOutlineOutlined";
 import CircleOutlinedIcon from "@mui/icons-material/CircleOutlined";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
+import { days, months, years } from "../../utils/date";
 
 const RegistrationForm = () => {
   const [formData, setFormData] = useState({
@@ -48,14 +49,36 @@ const RegistrationForm = () => {
       [name]: value,
     }));
 
+    // if (name === "year" || name === "month") {
+    //   const daysInMonth = new Date(formData.year, formData.month, 0).getDate();
+    //   const currentMonth = new Date().getMonth() + 1;
+    //   const currentDay = new Date().getDate();
+    //   const availableMonths =
+    //     parseInt(formData.year) === currentYear
+    //       ? months.slice(0, new Date().getMonth() + 1)
+    //       : months;
+    //   const availableDays =
+    //     parseInt(formData.year) === currentYear &&
+    //     parseInt(formData.month) === currentMonth
+    //       ? currentDay
+    //       : daysInMonth;
+
+    //   setFormData((prevData) => ({
+    //     ...prevData,
+    //     day: Math.min(prevData.day, availableDays),
+    //     month:
+    //       prevData.year === currentYear
+    //         ? Math.min(prevData.month, currentMonth.toString().padStart(2, "0"))
+    //         : prevData.month,
+    //   }));
+    // }
+
     if (name === "password" || name === "confirmPassword") {
       if (!value) {
-        setInputErrors((prev) => {
-          return {
-            ...prev,
-            [name]: "Password cannot be empty!",
-          };
-        });
+        setInputErrors((prev) => ({
+          ...prev,
+          [name]: "Password cannot be empty!",
+        }));
       } else {
         validateInput(event);
       }
@@ -109,6 +132,9 @@ const RegistrationForm = () => {
             });
             stateObj[name] = "";
           } else {
+            setPasswordChecks((prev) => {
+              return { ...prev, match: "unchecked" };
+            });
             stateObj[name] = "";
           }
           break;
@@ -190,19 +216,21 @@ const RegistrationForm = () => {
     });
   };
 
-  const months = [
-    { value: "01", label: "January" },
-    { value: "02", label: "February" },
-    { value: "03", label: "March" },
-    // ... and so on for all months
-  ];
+  useEffect(() => {
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = (currentDate.getMonth() + 1)
+      .toString()
+      .padStart(2, "0");
+    const currentDay = currentDate.getDate().toString().padStart(2, "0");
 
-  const years = [
-    { value: "2022", label: "2022" },
-    { value: "2021", label: "2021" },
-    { value: "2020", label: "2020" },
-    // ... and so on for all years
-  ];
+    setFormData((prevData) => ({
+      ...prevData,
+      day: currentDay,
+      month: currentMonth,
+      year: currentYear.toString(),
+    }));
+  }, []);
 
   return (
     <div className={styles.registration_form_container}>
@@ -264,10 +292,9 @@ const RegistrationForm = () => {
               required
             >
               <option value="">Day</option>
-              {/* Add options for days */}
-              {Array.from({ length: 31 }, (_, index) => (
-                <option key={index + 1} value={index + 1}>
-                  {index + 1}
+              {days.map((day, index) => (
+                <option key={index} value={day}>
+                  {day}
                 </option>
               ))}
             </select>
@@ -445,7 +472,21 @@ const RegistrationForm = () => {
           type="submit"
           variant="contained"
           onClick={handleSubmit}
-          disabled={Object.keys(inputErrors).length !== 0}
+          disabled={
+            !(
+              passwordChecks.lowercase === "checked" &&
+              passwordChecks.match === "checked" &&
+              passwordChecks.uppercase === "checked" &&
+              passwordChecks.number === "checked" &&
+              passwordChecks.passwordLength === "checked" &&
+              passwordChecks.specialChar === "checked" &&
+              inputErrors.fullName === "" &&
+              inputErrors.mobileNumber === "" &&
+              inputErrors.email === "" &&
+              inputErrors.password === "" &&
+              inputErrors.confirmPassword === ""
+            )
+          }
         >
           REGISTER
         </Button>
