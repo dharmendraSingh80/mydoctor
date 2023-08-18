@@ -8,6 +8,7 @@
     width: 100%;
     z-index: 1201;
     top: 0;
+    background-color: #fff;
 }
 
 .navbar {
@@ -39,25 +40,29 @@
 }
 
 .searchBar {
+    display: flex;
+
     /* margin-left: 9.5rem; */
-    width: 50%;
+    width: 300px;
+    background-color: #fafafa;
 }
 
 .dropdown {
     /* min-width: 150px; */
-    width: 50%;
+    width: 250px;
+    background-color: #fafafa;
 }
 
 .serviceDoctorsContainer {
     display: flex;
     justify-content: center;
-    background-color: #fafafa;
+    /* background-color: #fafafa; */
 }
 
 
 
 /* Media query for medium screens */
-@media (max-width: 960px) {
+@media (max-width: 900px) {
 
     .logo {
         display: none;
@@ -67,6 +72,9 @@
         display: block;
     }
 
+    .serviceDoctorsContainer {
+        display: none;
+    }
 
     .menuIcon {
         display: block;

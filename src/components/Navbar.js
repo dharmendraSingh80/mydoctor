@@ -8,20 +8,26 @@ import { Box, IconButton, Menu, Typography } from "@mui/material";
 import MenuItem from "@mui/material/MenuItem";
 import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
+import { Link } from "react-router-dom";
 
 const pages = ["Products", "Pricing", "Blog"];
-function Navbar() {
+function Navbar({ handleDrawerToggle }) {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
+
   const handleSearch = (event) => {
     const searchText = event.target.value;
     // Add your search logic here
   };
 
+  //
+
   return (
     <div className={styles.nav_wrapper}>
       <nav className={styles.navbar}>
         <div className={styles.logo}>
-          <img src={myIcon} className={styles.icon} alt="my logo" />
+          <Link to="/">
+            <img src={myIcon} className={styles.icon} alt="my logo" />
+          </Link>
         </div>
         <Box sx={{ display: { xs: "flex", md: "none" } }}>
           <IconButton
@@ -29,7 +35,7 @@ function Navbar() {
             aria-label="account of current user"
             aria-controls="menu-appbar"
             aria-haspopup="true"
-            // onClick={handleOpenNavMenu}
+            onClick={handleDrawerToggle}
             color="inherit"
           >
             <MenuIcon />
@@ -67,11 +73,12 @@ function Navbar() {
           <Box
             sx={{
               display: { xs: "flex", md: "none" },
-              mb: 2,
               justifyContent: "center",
             }}
           >
-            <img src={myIcon} className={styles.icon} alt="my logo" />
+            <Link to="/">
+              <img src={myIcon} className={styles.icon} alt="my logo" />
+            </Link>
           </Box>
 
           <div className={styles.serviceDoctorsContainer}>
@@ -80,19 +87,17 @@ function Navbar() {
                 disablePortal
                 id="combo-box-demo"
                 options={top100Films}
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    border: "none",
+                  },
+                  "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
+                    border: "none",
+                  },
+                }}
                 forcePopupIcon={false}
                 renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    placeholder="Select a Service"
-                    sx={{
-                      "& .MuiInputBase-root": {
-                        border: "0",
-                        outline: "none",
-                        borderRadius: 0,
-                      },
-                    }}
-                  />
+                  <TextField {...params} placeholder="Select a Service" />
                 )}
               />
             </div>
@@ -102,12 +107,15 @@ function Navbar() {
                 placeholder="Search Doctors"
                 fullWidth
                 variant="outlined"
-                onChange={handleSearch}
-                InputProps={{
-                  // Add the SearchIcon as the endAdornment
-                  endAdornment: <SearchIcon color="action" fontSize="small" />,
+                sx={{
+                  "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
+                    border: "none",
+                  },
                 }}
               />
+              <IconButton onClick={handleSearch} aria-label="search">
+                <SearchIcon />
+              </IconButton>
             </div>
           </div>
         </div>
@@ -118,6 +126,49 @@ function Navbar() {
           </Button>
         </div>
       </nav>
+      <Box
+        sx={{
+          display: { md: "none", xs: "flex" },
+          justifyContent: "center",
+          p: 2,
+        }}
+      >
+        <div className={styles.dropdown}>
+          <Autocomplete
+            disablePortal
+            id="combo-box-demo"
+            options={top100Films}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                border: "none",
+              },
+              "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
+                border: "none",
+              },
+            }}
+            forcePopupIcon={false}
+            renderInput={(params) => (
+              <TextField {...params} placeholder="Select a Service" />
+            )}
+          />
+        </div>
+        <div className={styles.searchBar}>
+          <TextField
+            id="search"
+            placeholder="Search Doctors"
+            fullWidth
+            variant="outlined"
+            sx={{
+              "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
+                border: "none",
+              },
+            }}
+          />
+          <IconButton onClick={handleSearch} aria-label="search">
+            <SearchIcon fontSize="medium" />
+          </IconButton>
+        </div>
+      </Box>
       <div className="swiper-wrapper"></div>
     </div>
   );

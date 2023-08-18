@@ -9,6 +9,7 @@ import FormLabel from "@mui/material/FormLabel";
 import CheckCircleOutlineOutlinedIcon from "@mui/icons-material/CheckCircleOutlineOutlined";
 import CircleOutlinedIcon from "@mui/icons-material/CircleOutlined";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
+import { Link } from "react-router-dom";
 
 const DoctorSignUpForm = () => {
   const [formData, setFormData] = useState({
@@ -402,7 +403,7 @@ const DoctorSignUpForm = () => {
           REGISTER
         </Button>
         <p>
-          Already have an account? <a href="/">Sign in</a>
+          Already have an account? <Link href="/">Sign in</Link>
         </p>
       </form>
     </div>

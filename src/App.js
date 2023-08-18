@@ -3,20 +3,37 @@ import "./App.css";
 import Navbar from "./components/Navbar";
 import Login from "./components/Login";
 import Home from "./components/Home";
+import { useState } from "react";
+import { Box } from "@mui/material";
+import Footer from "./components/Footer";
 
 function App() {
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  const handleDrawerToggle = () => {
+    setMobileOpen(!mobileOpen);
+  };
   return (
     <div>
       <BrowserRouter>
-        <Navbar />
-        <div style={{ marginTop: "25vh" }}>
+        <Navbar handleDrawerToggle={handleDrawerToggle} />
+        <Box sx={{ marginTop: { xs: "14rem", md: "9rem" } }}>
           <Routes>
-            <Route path="/" element={<Home />} />
+            <Route
+              path="/"
+              element={
+                <Home
+                  mobileOpen={mobileOpen}
+                  handleDrawerToggle={handleDrawerToggle}
+                />
+              }
+            />
             <Route path="/login" element={<Login />} />
             {/* <Route path="/l" element={<Contact />} />
           <Route path="*" element={<NoPage />} /> */}
           </Routes>
-        </div>
+        </Box>
+        <Footer />
       </BrowserRouter>
     </div>
   );

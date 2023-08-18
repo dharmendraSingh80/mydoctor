@@ -33,7 +33,6 @@ export default function LabTabs() {
           }}
         >
           <TabList
-            sx={{ width: { md: "90%" } }}
             variant="fullWidth"
             onChange={handleChange}
             aria-label="wrapped label tabs example"

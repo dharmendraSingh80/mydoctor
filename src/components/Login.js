@@ -1,9 +1,10 @@
+import { Box } from "@mui/material";
 import Tabs from "./Tabs";
 
 export default function Login() {
   return (
-    <div>
+    <Box sx={{ mb: 3 }}>
       <Tabs />
-    </div>
+    </Box>
   );
 }

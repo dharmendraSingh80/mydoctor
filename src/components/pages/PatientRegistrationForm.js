@@ -10,6 +10,7 @@ import CheckCircleOutlineOutlinedIcon from "@mui/icons-material/CheckCircleOutli
 import CircleOutlinedIcon from "@mui/icons-material/CircleOutlined";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import { days, months, years } from "../../utils/date";
+import { Link } from "react-router-dom";
 
 const RegistrationForm = () => {
   const [formData, setFormData] = useState({
@@ -491,7 +492,7 @@ const RegistrationForm = () => {
           REGISTER
         </Button>
         <p>
-          Already have an account? <a href="/">Sign in</a>
+          Already have an account? <Link to="/">Sign in</Link>
         </p>
       </form>
     </div>

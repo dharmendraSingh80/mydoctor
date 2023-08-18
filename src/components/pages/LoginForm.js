@@ -3,6 +3,7 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
+import { Link } from "react-router-dom";
 
 function LoginForm() {
   const handleSubmit = (event) => {
@@ -55,10 +56,10 @@ function LoginForm() {
             >
               LOGIN
             </Button>
-            <a href="/">Forget password</a>
+            <Link to="/">Forget password</Link>
           </Box>
           <p>
-            Don't have an account <a href="/">Sign up</a>
+            Don't have an account <Link to="/">Sign up</Link>
           </p>
         </Box>
       </Box>
