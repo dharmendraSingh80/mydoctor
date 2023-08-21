@@ -6,6 +6,7 @@ import Home from "./components/Home";
 import { useState } from "react";
 import { Box } from "@mui/material";
 import Footer from "./components/Footer";
+import Specialities from "./components/Specialities";
 
 function App() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -23,6 +24,15 @@ function App() {
               path="/"
               element={
                 <Home
+                  mobileOpen={mobileOpen}
+                  handleDrawerToggle={handleDrawerToggle}
+                />
+              }
+            />
+            <Route
+              path="/specialities"
+              element={
+                <Specialities
                   mobileOpen={mobileOpen}
                   handleDrawerToggle={handleDrawerToggle}
                 />

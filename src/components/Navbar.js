@@ -4,15 +4,15 @@ import styles from "../styles/navbar.module.css";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
-import { Box, IconButton, Menu, Typography } from "@mui/material";
-import MenuItem from "@mui/material/MenuItem";
+import { Box, IconButton } from "@mui/material";
+// import MenuItem from "@mui/material/MenuItem";
 import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
 import { Link } from "react-router-dom";
 
-const pages = ["Products", "Pricing", "Blog"];
+// const pages = ["Products", "Pricing", "Blog"];
 function Navbar({ handleDrawerToggle }) {
-  const [anchorElNav, setAnchorElNav] = React.useState(null);
+  // const [anchorElNav, setAnchorElNav] = React.useState(null);
 
   const handleSearch = (event) => {
     const searchText = event.target.value;
@@ -40,7 +40,7 @@ function Navbar({ handleDrawerToggle }) {
           >
             <MenuIcon />
           </IconButton>
-          <Menu
+          {/* <Menu
             id="menu-appbar"
             anchorEl={anchorElNav}
             anchorOrigin={{
@@ -66,7 +66,7 @@ function Navbar({ handleDrawerToggle }) {
                 <Typography textAlign="center">{page}</Typography>
               </MenuItem>
             ))}
-          </Menu>
+          </Menu> */}
         </Box>
 
         <div className={styles.centerContainer}>
@@ -131,6 +131,7 @@ function Navbar({ handleDrawerToggle }) {
           display: { md: "none", xs: "flex" },
           justifyContent: "center",
           p: 2,
+          // width: { xs: "90%", sm: "90%" },
         }}
       >
         <div className={styles.dropdown}>

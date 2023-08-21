@@ -5,17 +5,18 @@
 
 .nav_wrapper {
     position: fixed;
-    width: 100%;
     z-index: 1201;
     top: 0;
     background-color: #fff;
+    width: 100%;
+
 }
 
 .navbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 2rem;
+    padding: 1rem;
     background-color: white;
 }
 
@@ -31,32 +32,26 @@
 
 .menuIcon {
     display: none;
-    /* Hide the menu icon by default */
 }
 
-.centerContainer {
-    display: flex;
-    align-items: center;
-}
+/* .centerContainer {
+    width: 40%;
+} */
 
 .searchBar {
     display: flex;
-
-    /* margin-left: 9.5rem; */
-    width: 300px;
+    width: 19rem;
     background-color: #fafafa;
 }
 
 .dropdown {
-    /* min-width: 150px; */
-    width: 250px;
+    width: 16rem;
     background-color: #fafafa;
 }
 
 .serviceDoctorsContainer {
     display: flex;
     justify-content: center;
-    /* background-color: #fafafa; */
 }
 
 
@@ -75,6 +70,7 @@
     .serviceDoctorsContainer {
         display: none;
     }
+
 
     .menuIcon {
         display: block;

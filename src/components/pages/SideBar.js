@@ -13,6 +13,7 @@ import BubbleChartSharpIcon from "@mui/icons-material/BubbleChartSharp";
 import CloseIcon from "@mui/icons-material/Close";
 import IconButton from "@mui/material/IconButton";
 import { styled } from "@mui/material/styles";
+import { Link } from "react-router-dom";
 
 const drawerWidth = 240;
 const DrawerHeader = styled("div")(({ theme }) => ({
@@ -25,6 +26,21 @@ const DrawerHeader = styled("div")(({ theme }) => ({
 }));
 
 function ResponsiveDrawer(props) {
+  const [selectedItem, setSelectedItem] = React.useState(null); // State to keep track of selected item
+
+  const handleItemClick = (index) => {
+    setSelectedItem(index);
+  };
+
+  const menuItems = [
+    { text: "Doctors", icon: <PersonSharpIcon />, link: "/" },
+    {
+      text: "Specialities",
+      icon: <BubbleChartSharpIcon />,
+      link: "/specialities",
+    },
+  ];
+
   const drawer = (
     <Box sx={{ marginTop: { md: 15 } }}>
       <DrawerHeader sx={{ display: { md: "none" } }}>
@@ -33,13 +49,25 @@ function ResponsiveDrawer(props) {
         </IconButton>
       </DrawerHeader>
       <List>
-        {["Doctors", "Specialities"].map((text, index) => (
-          <ListItem key={text} disablePadding>
+        {menuItems.map((item, index) => (
+          <ListItem
+            key={index}
+            component={Link}
+            to={item.link}
+            sx={{
+              textDecoration: "none",
+              color: "inherit",
+              backgroundColor:
+                selectedItem === index ? "lightgrey" : "transparent",
+            }}
+            disablePadding
+            onClick={() => handleItemClick(index)}
+            selected={selectedItem === index}
+            button
+          >
             <ListItemButton>
-              <ListItemIcon>
-                {index === 0 ? <PersonSharpIcon /> : <BubbleChartSharpIcon />}
-              </ListItemIcon>
-              <ListItemText primary={text} />
+              <ListItemIcon>{item.icon}</ListItemIcon>
+              <ListItemText primary={item.text} />
             </ListItemButton>
           </ListItem>
         ))}

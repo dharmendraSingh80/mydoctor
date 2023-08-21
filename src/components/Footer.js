@@ -10,7 +10,6 @@ export default function Footer() {
         backgroundColor: "#eeeeee",
         borderTopColor: "#e0e0e0",
         position: "sticky",
-        width: "100%",
       }}
     >
       <p>This is some content in sticky footer</p>

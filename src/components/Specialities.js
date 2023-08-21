@@ -1,12 +1,9 @@
 import ResponsiveDrawer from "./pages/SideBar";
 import Box from "@mui/material/Box";
-import { Link } from "react-router-dom";
-import finalBannerImg from "../myIcon/final banner.svg";
 import SpecialitiesCard from "./pages/SpecialitiesCard";
-import DoctorsCard from "./pages/DoctorsCard";
 
 const drawerWidth = 240;
-export default function Home({ mobileOpen, handleDrawerToggle }) {
+export default function Specialities({ mobileOpen, handleDrawerToggle }) {
   return (
     <Box sx={{ display: "flex" }}>
       <ResponsiveDrawer
@@ -22,10 +19,6 @@ export default function Home({ mobileOpen, handleDrawerToggle }) {
           width: { md: `calc(100% - ${drawerWidth}px)` },
         }}
       >
-        <Box>
-          <img src={finalBannerImg} alt="final banner image" />
-        </Box>
-
         <section>
           <Box
             sx={{
@@ -54,7 +47,7 @@ export default function Home({ mobileOpen, handleDrawerToggle }) {
             <SpecialitiesCard />
             <SpecialitiesCard />
           </Box>
-          <Box
+          {/* <Box
             sx={{
               textAlign: { xs: "center", md: "end" },
               p: "1rem 0 0 0",
@@ -71,27 +64,7 @@ export default function Home({ mobileOpen, handleDrawerToggle }) {
             >
               View all Specialities...
             </Link>
-          </Box>
-        </section>
-        <section id="doctors">
-          <Box>340+ Doctors</Box>
-          <Box
-            sx={{
-              display: "grid",
-              gridTemplateColumns: {
-                xs: "1fr",
-                sm: "1fr 1fr",
-                lg: "1fr 1fr 1fr",
-              },
-              gridGap: "1.8rem",
-            }}
-          >
-            <DoctorsCard />
-            <DoctorsCard />
-            <DoctorsCard />
-            <DoctorsCard />
-            <DoctorsCard />
-          </Box>
+          </Box> */}
         </section>
       </Box>
     </Box>
