@@ -9,6 +9,7 @@ import { Box, IconButton } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
 import { Link } from "react-router-dom";
+// import Swiper from "./pages/Swiper";
 
 // const pages = ["Products", "Pricing", "Blog"];
 function Navbar({ handleDrawerToggle }) {
@@ -40,33 +41,6 @@ function Navbar({ handleDrawerToggle }) {
           >
             <MenuIcon />
           </IconButton>
-          {/* <Menu
-            id="menu-appbar"
-            anchorEl={anchorElNav}
-            anchorOrigin={{
-              vertical: "bottom",
-              horizontal: "left",
-            }}
-            keepMounted
-            transformOrigin={{
-              vertical: "top",
-              horizontal: "left",
-            }}
-            open={Boolean(anchorElNav)}
-            // onClose={handleCloseNavMenu}
-            sx={{
-              display: { xs: "block", md: "none" },
-            }}
-          >
-            {pages.map((page) => (
-              <MenuItem
-                key={page}
-                //onClick={handleCloseNavMenu}
-              >
-                <Typography textAlign="center">{page}</Typography>
-              </MenuItem>
-            ))}
-          </Menu> */}
         </Box>
 
         <div className={styles.centerContainer}>
@@ -170,7 +144,7 @@ function Navbar({ handleDrawerToggle }) {
           </IconButton>
         </div>
       </Box>
-      <div className="swiper-wrapper"></div>
+      <div className="swiper-wrapper">{/* <Swiper /> */}</div>
     </div>
   );
 }

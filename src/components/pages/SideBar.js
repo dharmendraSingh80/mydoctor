@@ -26,7 +26,7 @@ const DrawerHeader = styled("div")(({ theme }) => ({
 }));
 
 function ResponsiveDrawer(props) {
-  const [selectedItem, setSelectedItem] = React.useState(null); // State to keep track of selected item
+  const [selectedItem, setSelectedItem] = React.useState(0); // State to keep track of selected item
 
   const handleItemClick = (index) => {
     setSelectedItem(index);

@@ -3,41 +3,80 @@ import "./App.css";
 import Navbar from "./components/Navbar";
 import Login from "./components/Login";
 import Home from "./components/Home";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Box } from "@mui/material";
 import Footer from "./components/Footer";
 import Specialities from "./components/Specialities";
+import ResponsiveDrawer from "./components/pages/SideBar";
+import { getDoctors, getSpecialities } from "./api";
 
 function App() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [info, setInfo] = useState({
+    speciality: [],
+    doctorsData: [],
+  });
+  const [totalCount, setTotalCount] = useState({
+    totalSpeciality: 0,
+    totalDoctors: 0,
+  });
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
+
+  const doctors = (
+    <Box sx={{ display: "flex" }}>
+      <ResponsiveDrawer
+        mobileOpen={mobileOpen}
+        handleDrawerToggle={handleDrawerToggle}
+      />
+      <Home
+        speciality={info.speciality}
+        totalSpeciality={totalCount.totalSpeciality}
+        doctorsData={info.doctorsData}
+        totalDoctors={totalCount.totalDoctors}
+      />
+    </Box>
+  );
+  const specialities = (
+    <Box sx={{ display: "flex" }}>
+      <ResponsiveDrawer
+        mobileOpen={mobileOpen}
+        handleDrawerToggle={handleDrawerToggle}
+      />
+      <Specialities
+        speciality={info.speciality}
+        totalSpeciality={totalCount.totalSpeciality}
+      />
+    </Box>
+  );
+
+  useEffect(() => {
+    Promise.all([getSpecialities(), getDoctors()]).then(
+      ([specialitiesData, doctorsData]) => {
+        setInfo((prev) => ({
+          ...prev,
+          speciality: specialitiesData.data,
+          doctorsData: doctorsData.data,
+        }));
+        setTotalCount((prev) => ({
+          ...prev,
+          totalSpeciality: specialitiesData.total,
+          totalDoctors: doctorsData.total,
+        }));
+      }
+    );
+  }, []);
+
   return (
     <div>
       <BrowserRouter>
         <Navbar handleDrawerToggle={handleDrawerToggle} />
         <Box sx={{ marginTop: { xs: "14rem", md: "9rem" } }}>
           <Routes>
-            <Route
-              path="/"
-              element={
-                <Home
-                  mobileOpen={mobileOpen}
-                  handleDrawerToggle={handleDrawerToggle}
-                />
-              }
-            />
-            <Route
-              path="/specialities"
-              element={
-                <Specialities
-                  mobileOpen={mobileOpen}
-                  handleDrawerToggle={handleDrawerToggle}
-                />
-              }
-            />
+            <Route path="/" element={doctors} />
+            <Route path="/specialities" element={specialities} />
             <Route path="/login" element={<Login />} />
             {/* <Route path="/l" element={<Contact />} />
           <Route path="*" element={<NoPage />} /> */}

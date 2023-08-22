@@ -6,7 +6,7 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
-const card = (
+const card = (content) => (
   <React.Fragment>
     <CardContent sx={{ p: "16px" }}>
       <Box
@@ -23,16 +23,31 @@ const card = (
 
         <Box>
           <Typography sx={{ fontSize: "16px", fontWeight: "bold" }}>
-            Dr. Dusty Huel
+            Dr.{content.firstName + " " + content.lastName}
           </Typography>
           <Typography sx={{ fontSize: "13px" }}>
-            Sunt iusto et veniam ea itaque aut. Ducimus accusamus velit eligendi
-            eos sed. Ratione corrupti a quis incidunt non perspiciatis nihil.
+            {content.profile?.qualifications &&
+            content.profile.qualifications.length > 0
+              ? content.profile.qualifications
+                  .map((qualification) => qualification.name)
+                  .join(" | ")
+              : ""}
           </Typography>
           <Typography sx={{ fontSize: "13px" }}>
-            Critical Care Medicine
+            {content.profile?.specialities &&
+            content.profile.specialities.length > 0
+              ? content.profile.specialities
+                  .map((speciality) => speciality.name)
+                  .join(" | ")
+              : ""}
           </Typography>
-          <Typography sx={{ fontSize: "13px" }}>8 years experience</Typography>
+
+          <Typography sx={{ fontSize: "13px" }}>
+            {content.profile?.experienceMonths
+              ? Math.floor(content.profile.experienceMonths / 12) +
+                " years of experience "
+              : ""}
+          </Typography>
           <Box
             sx={{
               display: "grid",
@@ -42,15 +57,41 @@ const card = (
               gridTemplateColumns: "auto 1fr",
             }}
           >
-            <Typography sx={{ fontSize: "13px", fontWeight: "600" }}>
+            <Typography variant="h6" sx={{ fontSize: "13px" }}>
               Hospital
             </Typography>
-            <Typography sx={{ fontSize: "13px" }}>Not available</Typography>
-            <Typography sx={{ fontSize: "13px", fontWeight: "600" }}>
+            <Typography sx={{ fontSize: "13px" }}>
+              {content.profile?.experience &&
+              content.profile.experience.length > 0
+                ? content.profile.experience.some(
+                    (experience) => !experience.toYear
+                  )
+                  ? content.profile.experience.map((experience, index) =>
+                      !experience.toYear ? (
+                        <span key={index}>{experience.place}</span>
+                      ) : null
+                    )
+                  : "Not available"
+                : "Not available"}
+            </Typography>
+
+            <Typography variant="h6" sx={{ fontSize: "13px" }}>
               Languages
             </Typography>
-            <Typography sx={{ fontSize: "13px" }}>Hindi, English</Typography>
-            <Typography sx={{ fontSize: "13px", fontWeight: "600" }}>
+            <Typography sx={{ fontSize: "13px" }}>
+              {content?.profile?.languages
+                ? content.profile.languages.map((language, index) => (
+                    <span key={index}>
+                      {language}
+                      {index !== content.profile.languages.length - 1
+                        ? ", "
+                        : ""}
+                    </span>
+                  ))
+                : "Not available"}
+            </Typography>
+
+            <Typography variant="h6" sx={{ fontSize: "13px" }}>
               Next available
             </Typography>
             <Typography sx={{ fontSize: "13px" }}>Not available</Typography>
@@ -67,7 +108,7 @@ const card = (
         position: "absolute",
         flexFlow: "column nowrap",
         alignItems: "flex-start",
-        marginLeft: "90px",
+        marginLeft: "7rem",
       }}
     >
       <Button
@@ -82,7 +123,8 @@ const card = (
   </React.Fragment>
 );
 
-export default function OutlinedCard() {
+export default function OutlinedCard({ content }) {
+  console.log(content);
   return (
     <Box sx={{ minWidth: 275 }}>
       <Card
@@ -94,7 +136,7 @@ export default function OutlinedCard() {
           minHeight: "280px",
         }}
       >
-        {card}
+        {card(content)}
       </Card>
     </Box>
   );

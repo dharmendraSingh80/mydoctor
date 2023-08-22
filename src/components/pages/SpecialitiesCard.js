@@ -3,10 +3,9 @@ import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
-import boneMerrowIcon from "../../myIcon/bone marrow.svg";
 import CardMedia from "@mui/material/CardMedia";
 
-const card = (
+const card = (content) => (
   <React.Fragment>
     <CardContent>
       <Box
@@ -21,21 +20,21 @@ const card = (
             component="img"
             alt="specialities"
             height="140"
-            image={boneMerrowIcon}
+            image={`http://my-doctors.net/${content.imageUrl}`}
           />
         </Box>
         <Box sx={{ mt: 2 }}>
-          <Typography sx={{ fontSize: "20px" }}>Bone Marrow</Typography>
+          <Typography sx={{ fontSize: "20px" }}>{content.name}</Typography>
         </Box>
       </Box>
     </CardContent>
   </React.Fragment>
 );
 
-export default function OutlinedCard() {
+export default function OutlinedCard({ content }) {
   return (
     <Box>
-      <Card variant="outlined">{card}</Card>
+      <Card variant="outlined">{card(content)}</Card>
     </Box>
   );
 }
