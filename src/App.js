@@ -9,6 +9,7 @@ import Footer from "./components/Footer";
 import Specialities from "./components/Specialities";
 import ResponsiveDrawer from "./components/pages/SideBar";
 import { getDoctors, getSpecialities } from "./api";
+import Doctor from "./components/Doctor";
 
 function App() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -52,6 +53,16 @@ function App() {
     </Box>
   );
 
+  const doctor = (
+    <Box sx={{ display: "flex" }}>
+      <ResponsiveDrawer
+        mobileOpen={mobileOpen}
+        handleDrawerToggle={handleDrawerToggle}
+      />
+      <Doctor />
+    </Box>
+  );
+
   useEffect(() => {
     Promise.all([getSpecialities(), getDoctors()]).then(
       ([specialitiesData, doctorsData]) => {
@@ -78,8 +89,7 @@ function App() {
             <Route path="/" element={doctors} />
             <Route path="/specialities" element={specialities} />
             <Route path="/login" element={<Login />} />
-            {/* <Route path="/l" element={<Contact />} />
-          <Route path="*" element={<NoPage />} /> */}
+            <Route path="/doctor/:id" element={doctor} />
           </Routes>
         </Box>
         <Footer />

@@ -42,7 +42,7 @@ function ResponsiveDrawer(props) {
   ];
 
   const drawer = (
-    <Box sx={{ marginTop: { md: 15 } }}>
+    <Box sx={{ marginTop: { md: 17 } }}>
       <DrawerHeader sx={{ display: { md: "none" } }}>
         <IconButton onClick={props.handleDrawerToggle}>
           <CloseIcon />

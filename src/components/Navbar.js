@@ -9,7 +9,7 @@ import { Box, IconButton } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
 import { Link } from "react-router-dom";
-// import Swiper from "./pages/Swiper";
+import Swiper from "./pages/Swiper";
 
 // const pages = ["Products", "Pricing", "Blog"];
 function Navbar({ handleDrawerToggle }) {
@@ -105,7 +105,6 @@ function Navbar({ handleDrawerToggle }) {
           display: { md: "none", xs: "flex" },
           justifyContent: "center",
           p: 2,
-          // width: { xs: "90%", sm: "90%" },
         }}
       >
         <div className={styles.dropdown}>
@@ -144,7 +143,9 @@ function Navbar({ handleDrawerToggle }) {
           </IconButton>
         </div>
       </Box>
-      <div className="swiper-wrapper">{/* <Swiper /> */}</div>
+      <Box>
+        <Swiper />
+      </Box>
     </div>
   );
 }

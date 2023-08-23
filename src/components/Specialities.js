@@ -18,10 +18,11 @@ import SearchIcon from "@mui/icons-material/Search";
 const drawerWidth = 240;
 
 export default function Specialities({ speciality, totalSpeciality }) {
-  const itemsPerPage = 8; // Number of items to show per page
+  // Number of items to show per page
   const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(8);
 
-  const totalPages = Math.ceil(totalSpeciality / itemsPerPage);
+  const totalPages = Math.ceil(speciality.length / itemsPerPage);
 
   const handlePageChange = (event, page) => {
     setCurrentPage(page);
@@ -70,12 +71,13 @@ export default function Specialities({ speciality, totalSpeciality }) {
               gridTemplateColumns: "1fr auto",
             }}
           >
-            <form className="MuiFormControl-root">
+            <FormControl>
               <TextField
                 placeholder="Search a Speciality"
                 variant="outlined"
                 margin="dense"
                 value=""
+                size="small"
                 aria-invalid="false"
                 InputProps={{
                   endAdornment: (
@@ -87,22 +89,22 @@ export default function Specialities({ speciality, totalSpeciality }) {
                   ),
                 }}
               />
-            </form>
+            </FormControl>
             <FormControl variant="outlined" margin="dense">
-              {/* <InputLabel htmlFor="select-option">Select Option</InputLabel> */}
               <Select
                 inputProps={{
                   name: "option",
                   id: "select-option",
                 }}
-                value={8}
+                value={itemsPerPage}
+                onChange={(event) => setItemsPerPage(event.target.value)}
+                size="small"
               >
                 <MenuItem value={8}>8</MenuItem>
                 <MenuItem value={12}>12</MenuItem>
                 <MenuItem value={16}>16</MenuItem>
                 <MenuItem value={20}>20</MenuItem>
                 <MenuItem value={40}>40</MenuItem>
-                {/* You can add more MenuItem elements here */}
               </Select>
             </FormControl>
           </Box>
@@ -122,25 +124,24 @@ export default function Specialities({ speciality, totalSpeciality }) {
             <SpecialitiesCard key={index} content={item} />
           ))}
         </Box>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            mt: "16px",
+          }}
+        >
+          <Stack spacing={2}>
+            <Pagination
+              count={totalPages}
+              page={currentPage}
+              onChange={handlePageChange}
+              variant="outlined"
+              color="primary"
+            />
+          </Stack>
+        </Box>
       </section>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          p: "1rem",
-        }}
-      >
-        <Stack spacing={2}>
-          <Pagination
-            count={totalPages}
-            page={currentPage}
-            onChange={handlePageChange}
-            variant="outlined"
-            color="primary"
-          />
-        </Stack>
-      </Box>
     </Box>
   );
 }

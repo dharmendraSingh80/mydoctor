@@ -17,9 +17,10 @@ export default function Home({
   const itemsPerPage = 8; // Number of items to show per page
   const [currentPage, setCurrentPage] = useState(1);
 
-  const totalPages = Math.ceil(totalSpeciality / itemsPerPage);
+  const totalPages = Math.ceil(doctorsData.length / itemsPerPage);
 
   const handlePageChange = (event, page) => {
+    console.log(page);
     setCurrentPage(page);
   };
 
@@ -33,7 +34,7 @@ export default function Home({
       sx={{
         flexGrow: 1,
         p: 3,
-        pt: 0,
+        pt: 1,
         width: { md: `calc(100% - ${drawerWidth}px)` },
       }}
     >
@@ -103,25 +104,24 @@ export default function Home({
             <DoctorsCard key={index} content={item} />
           ))}
         </Box>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            mt: "16px",
+          }}
+        >
+          <Stack spacing={2}>
+            <Pagination
+              count={totalPages}
+              page={currentPage}
+              onChange={handlePageChange}
+              variant="outlined"
+              color="primary"
+            />
+          </Stack>
+        </Box>
       </section>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          p: "1rem",
-        }}
-      >
-        <Stack spacing={2}>
-          <Pagination
-            count={totalPages}
-            page={currentPage}
-            onChange={handlePageChange}
-            variant="outlined"
-            color="primary"
-          />
-        </Stack>
-      </Box>
     </Box>
   );
 }

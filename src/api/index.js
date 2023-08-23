@@ -9,3 +9,9 @@ export async function getDoctors() {
   data = await data.json();
   return data;
 }
+
+export async function getDoctorDetails(id) {
+  let data = await fetch(`${process.env.REACT_APP_BASE_URL}/doctors/${id}`);
+  data = await data.json();
+  return data;
+}
