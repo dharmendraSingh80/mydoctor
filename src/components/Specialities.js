@@ -113,9 +113,9 @@ export default function Specialities({ speciality, totalSpeciality }) {
           sx={{
             display: "grid",
             gridTemplateColumns: {
-              xs: "auto",
-              sm: "auto auto",
-              lg: "auto auto auto",
+              xs: "1fr",
+              sm: "1fr 1fr",
+              lg: "1fr 1fr 1fr",
             },
             gap: "20px",
           }}

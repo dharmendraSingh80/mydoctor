@@ -51,7 +51,7 @@ const card = (content) => {
             <AccountCircleIcon sx={{ fontSize: 100 }} color="disabled" />
           </Box>
 
-          <Box>
+          <Box sx={{ flexGrow: 1, flexShrink: 1 }}>
             <Typography sx={{ fontSize: "16px", fontWeight: "bold" }}>
               Dr. {content.firstName + " " + content.lastName}
             </Typography>
@@ -101,7 +101,7 @@ export default function OutlinedCard({ content }) {
         <Box sx={styles.buttonStyle}>
           <Button
             size="small"
-            sx={{ flexGrow: 0, flexShrink: 0, borderRadius: "25px" }}
+            sx={styles.button}
             color="primary"
             variant="outlined"
             onClick={handleBookAppointment}
@@ -120,6 +120,7 @@ const styles = {
     overflow: "hidden",
     position: "relative",
     minHeight: "280px",
+    height: "92%",
   },
   docIcon: {
     gap: "1rem",
@@ -141,8 +142,13 @@ const styles = {
     display: "flex",
     p: ".8rem",
     position: "absolute",
-    flexFlow: "column nowrap",
+    flexFlow: "nowrap",
     alignItems: "flex-start",
     marginLeft: "7rem",
+  },
+  button: {
+    flexGrow: 0,
+    flexShrink: 0,
+    borderRadius: "25px",
   },
 };

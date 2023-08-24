@@ -1,43 +1,75 @@
-import * as React from "react";
-import Card from "@mui/material/Card";
-import CardHeader from "@mui/material/CardHeader";
-import CardContent from "@mui/material/CardContent";
-import CardActions from "@mui/material/CardActions";
-import Avatar from "@mui/material/Avatar";
-import IconButton from "@mui/material/IconButton";
-import Typography from "@mui/material/Typography";
-import { red } from "@mui/material/colors";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import ShareIcon from "@mui/icons-material/Share";
+import { Box, Typography } from "@mui/material";
+import { useParams } from "react-router-dom";
+import DoctorDetailsCard from "./pages/DoctorDetailsCard";
+import AccordionDoctor from "./pages/AccordianDoctor";
+import { useEffect, useState } from "react";
+import { getDoctorDetails } from "../api";
 
 export default function Doctor() {
-  return (
-    <Card sx={{ maxWidth: 345 }}>
-      <CardHeader
-        avatar={
-          <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
-            R
-          </Avatar>
-        }
-        title="Shrimp and Chorizo Paella"
-        subheader="September 14, 2016"
-      />
+  const [doctorDetails, setDoctorDetails] = useState("");
+  const { id } = useParams();
 
-      <CardContent>
-        <Typography variant="body2" color="text.secondary">
-          This impressive paella is a perfect party dish and a fun meal to cook
-          together with your guests. Add 1 cup of frozen peas along with the
-          mussels, if you like.
-        </Typography>
-      </CardContent>
-      <CardActions disableSpacing>
-        <IconButton aria-label="add to favorites">
-          <FavoriteIcon />
-        </IconButton>
-        <IconButton aria-label="share">
-          <ShareIcon />
-        </IconButton>
-      </CardActions>
-    </Card>
+  useEffect(() => {
+    getDoctorDetails(id).then((data) => {
+      setDoctorDetails(data);
+    });
+  }, []);
+  return (
+    // <Box sx={styles.main}>
+    <Box sx={styles.wrapper}>
+      <Box sx={styles.doctorContainer}>
+        <Box sx={styles.details}>
+          <Box sx={styles.docCard}>
+            <DoctorDetailsCard content={doctorDetails} />
+          </Box>
+          <Box sx={styles.docCard}>
+            <Typography>No slot available</Typography>
+          </Box>
+          <Box sx={styles.accordianDoc}>
+            <AccordionDoctor content={doctorDetails} />
+          </Box>
+        </Box>
+      </Box>
+    </Box>
   );
 }
+
+const styles = {
+  doctorContainer: {
+    width: "100%",
+    display: "flex",
+    // maxWidth: "1300px",
+    // marginTop: "30px",
+    alignItems: "flex-start",
+    flexDirection: "column",
+    justifyContent: "center",
+  },
+  wrapper: {
+    padding: "40px",
+    flexGrow: 1,
+    backgroundColor: "#fafafa",
+  },
+  details: {
+    display: "flex",
+    flexWrap: "wrap",
+    boxSizing: "border-box",
+    width: "calc(100% + 24px)",
+    margin: "-12px",
+  },
+  docCard: {
+    padding: "12px",
+    flexGrow: 0,
+    maxWidth: "50%",
+    flexBasis: "50%",
+    margin: 0,
+    boxSizing: "border-box",
+  },
+  accordianDoc: {
+    padding: "12px",
+    flexGrow: 0,
+    maxWidth: "100%",
+    flexBasis: "100%",
+    margin: 0,
+    boxSizing: "border-box",
+  },
+};
