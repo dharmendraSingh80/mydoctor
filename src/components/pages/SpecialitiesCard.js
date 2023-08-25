@@ -4,6 +4,8 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import CardMedia from "@mui/material/CardMedia";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import { useNavigate } from "react-router-dom";
 
 const card = (content) => (
   <React.Fragment>
@@ -16,12 +18,16 @@ const card = (content) => (
         }}
       >
         <Box>
-          <CardMedia
-            component="img"
-            alt="specialities"
-            height="140"
-            image={`http://my-doctors.net/${content.imageUrl}`}
-          />
+          {content.imageUrl ? (
+            <CardMedia
+              component="img"
+              alt="specialities"
+              height="140"
+              image={`http://my-doctors.net/${content.imageUrl}`}
+            />
+          ) : (
+            <AccountCircleIcon sx={{ fontSize: 130 }} color="disabled" />
+          )}
         </Box>
         <Box sx={{ mt: 2 }}>
           <Typography sx={{ fontSize: "20px" }}>{content.name}</Typography>
@@ -32,9 +38,19 @@ const card = (content) => (
 );
 
 export default function OutlinedCard({ content }) {
+  const navigate = useNavigate();
+  const handleSearch = () => {
+    navigate(`/search?sp=${content.name}`);
+  };
   return (
     <Box>
-      <Card variant="outlined">{card(content)}</Card>
+      <Card
+        variant="outlined"
+        sx={{ cursor: "pointer" }}
+        onClick={handleSearch}
+      >
+        {card(content)}
+      </Card>
     </Box>
   );
 }

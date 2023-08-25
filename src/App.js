@@ -10,6 +10,8 @@ import Specialities from "./components/Specialities";
 import ResponsiveDrawer from "./components/pages/SideBar";
 import { getDoctors, getSpecialities } from "./api";
 import Doctor from "./components/Doctor";
+import DoctorsBySpeciality from "./components/DoctorsBySpeciality";
+// import { useLocation } from "react-router-dom";
 
 function App() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -21,6 +23,9 @@ function App() {
     totalSpeciality: 0,
     totalDoctors: 0,
   });
+  // const location = useLocation();
+  // const searchParams = new URLSearchParams(location.search);
+  // const sp = searchParams.get("sp");
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -41,7 +46,7 @@ function App() {
     </Box>
   );
   const specialities = (
-    <Box sx={{ display: "flex" }}>
+    <Box sx={{ display: "flex", minHeight: "68vh" }}>
       <ResponsiveDrawer
         mobileOpen={mobileOpen}
         handleDrawerToggle={handleDrawerToggle}
@@ -83,13 +88,25 @@ function App() {
   return (
     <div>
       <BrowserRouter>
-        <Navbar handleDrawerToggle={handleDrawerToggle} />
+        <Navbar
+          handleDrawerToggle={handleDrawerToggle}
+          dataSpeciality={info.speciality}
+        />
         <Box sx={{ marginTop: { xs: "14rem", md: "9rem" } }}>
           <Routes>
             <Route path="/" element={doctors} />
             <Route path="/specialities" element={specialities} />
             <Route path="/login" element={<Login />} />
             <Route path="/doctor/:id" element={doctor} />
+            <Route
+              path="/search"
+              element={
+                <DoctorsBySpeciality
+                  mobileOpen={mobileOpen}
+                  handleDrawerToggle={handleDrawerToggle}
+                />
+              }
+            />
           </Routes>
         </Box>
         <Footer />

@@ -3,30 +3,50 @@ import { useParams } from "react-router-dom";
 import DoctorDetailsCard from "./pages/DoctorDetailsCard";
 import AccordionDoctor from "./pages/AccordianDoctor";
 import { useEffect, useState } from "react";
-import { getDoctorDetails } from "../api";
+import { getDoctorDetails, getNumbersOfSlots } from "../api";
 
 export default function Doctor() {
-  const [doctorDetails, setDoctorDetails] = useState("");
+  const [doctor, setDoctor] = useState({
+    doctorDetails: "",
+    slots: [],
+  });
   const { id } = useParams();
 
   useEffect(() => {
-    getDoctorDetails(id).then((data) => {
-      setDoctorDetails(data);
-    });
+    Promise.all([getDoctorDetails(id), getNumbersOfSlots(id)]).then(
+      ([doctorData, slotData]) => {
+        setDoctor((prev) => ({
+          ...prev,
+          doctorDetails: doctorData,
+          slots: slotData.data,
+        }));
+      }
+    );
   }, []);
+
   return (
     // <Box sx={styles.main}>
     <Box sx={styles.wrapper}>
       <Box sx={styles.doctorContainer}>
         <Box sx={styles.details}>
           <Box sx={styles.docCard}>
-            <DoctorDetailsCard content={doctorDetails} />
+            <DoctorDetailsCard content={doctor.doctorDetails} />
           </Box>
           <Box sx={styles.docCard}>
-            <Typography>No slot available</Typography>
+            <Typography>
+              {doctor?.slots.length === 0 ? (
+                "No slots available"
+              ) : (
+                <ul>
+                  {doctor?.slots.map((slot) => (
+                    <li key={slot._id}>{slot.startTime}</li>
+                  ))}
+                </ul>
+              )}
+            </Typography>
           </Box>
           <Box sx={styles.accordianDoc}>
-            <AccordionDoctor content={doctorDetails} />
+            <AccordionDoctor content={doctor.doctorDetails} />
           </Box>
         </Box>
       </Box>

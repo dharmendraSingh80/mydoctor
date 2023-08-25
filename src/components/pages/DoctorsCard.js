@@ -96,7 +96,7 @@ export default function OutlinedCard({ content }) {
   };
   return (
     <Box sx={{ minWidth: 275 }}>
-      <Card variant="outlined" sx={styles.card}>
+      <Card variant="outlined" onClick={handleBookAppointment} sx={styles.card}>
         {card(content)}
         <Box sx={styles.buttonStyle}>
           <Button
@@ -104,7 +104,6 @@ export default function OutlinedCard({ content }) {
             sx={styles.button}
             color="primary"
             variant="outlined"
-            onClick={handleBookAppointment}
           >
             <span> BOOK APPOINTMENT</span>
           </Button>
@@ -121,6 +120,7 @@ const styles = {
     position: "relative",
     minHeight: "280px",
     height: "92%",
+    cursor: "pointer",
   },
   docIcon: {
     gap: "1rem",

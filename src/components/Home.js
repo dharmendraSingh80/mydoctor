@@ -20,7 +20,6 @@ export default function Home({
   const totalPages = Math.ceil(doctorsData.length / itemsPerPage);
 
   const handlePageChange = (event, page) => {
-    console.log(page);
     setCurrentPage(page);
   };
 
