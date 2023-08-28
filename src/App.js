@@ -11,7 +11,6 @@ import ResponsiveDrawer from "./components/pages/SideBar";
 import { getDoctors, getSpecialities } from "./api";
 import Doctor from "./components/Doctor";
 import DoctorsBySpeciality from "./components/DoctorsBySpeciality";
-// import { useLocation } from "react-router-dom";
 
 function App() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -23,9 +22,6 @@ function App() {
     totalSpeciality: 0,
     totalDoctors: 0,
   });
-  // const location = useLocation();
-  // const searchParams = new URLSearchParams(location.search);
-  // const sp = searchParams.get("sp");
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -58,16 +54,6 @@ function App() {
     </Box>
   );
 
-  const doctor = (
-    <Box sx={{ display: "flex" }}>
-      <ResponsiveDrawer
-        mobileOpen={mobileOpen}
-        handleDrawerToggle={handleDrawerToggle}
-      />
-      <Doctor />
-    </Box>
-  );
-
   useEffect(() => {
     Promise.all([getSpecialities(), getDoctors()]).then(
       ([specialitiesData, doctorsData]) => {
@@ -96,8 +82,16 @@ function App() {
           <Routes>
             <Route path="/" element={doctors} />
             <Route path="/specialities" element={specialities} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/doctor/:id" element={doctor} />
+            <Route path="/auth/:tabValue" element={<Login />} />
+            <Route
+              path="/doctor/:id"
+              element={
+                <Doctor
+                  mobileOpen={mobileOpen}
+                  handleDrawerToggle={handleDrawerToggle}
+                />
+              }
+            />
             <Route
               path="/search"
               element={

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import SpecialitiesCard from "./pages/SpecialitiesCard";
 import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
@@ -21,17 +21,37 @@ export default function Specialities({ speciality, totalSpeciality }) {
   // Number of items to show per page
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(8);
+  const [searchValue, setSearchValue] = useState("");
 
-  const totalPages = Math.ceil(speciality.length / itemsPerPage);
+  const [showSpecialities, setShowSpecialities] = useState(speciality);
+
+  const totalPages = Math.ceil(showSpecialities.length / itemsPerPage);
 
   const handlePageChange = (event, page) => {
+    if (searchValue) {
+      setSearchValue("");
+    }
+
     setCurrentPage(page);
   };
 
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
 
-  const displayedSpecialities = speciality.slice(startIndex, endIndex);
+  const displayedSpecialities = showSpecialities.slice(startIndex, endIndex);
+  useEffect(() => {
+    setShowSpecialities(speciality);
+  }, [speciality]);
+
+  const handleSearch = () => {
+    const searchTerms = searchValue.toLowerCase().split(/\s+/); // Split search input into words
+    const filteredSpecialities = speciality.filter((item) =>
+      searchTerms.every((term) => item.name.toLowerCase().includes(term))
+    );
+    // Update the displayed specialties and reset the current page to 1
+    setShowSpecialities(filteredSpecialities);
+    setCurrentPage(1);
+  };
 
   return (
     <Box
@@ -61,7 +81,10 @@ export default function Specialities({ speciality, totalSpeciality }) {
               flexGrow: 1,
             }}
           >
-            {Math.floor(totalSpeciality / 10) * 10}+ Specialities
+            {showSpecialities.length > 10
+              ? Math.floor(showSpecialities.length / 10) * 10
+              : showSpecialities.length}
+            + Specialities
           </Typography>
           <Box
             sx={{
@@ -76,13 +99,17 @@ export default function Specialities({ speciality, totalSpeciality }) {
                 placeholder="Search a Speciality"
                 variant="outlined"
                 margin="dense"
-                value=""
+                value={searchValue}
                 size="small"
+                onChange={(event) => setSearchValue(event.target.value)}
                 aria-invalid="false"
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
-                      <IconButton aria-label="search specialities">
+                      <IconButton
+                        aria-label="search specialities"
+                        onClick={handleSearch}
+                      >
                         <SearchIcon />
                       </IconButton>
                     </InputAdornment>
@@ -131,15 +158,21 @@ export default function Specialities({ speciality, totalSpeciality }) {
             mt: "16px",
           }}
         >
-          <Stack spacing={2}>
-            <Pagination
-              count={totalPages}
-              page={currentPage}
-              onChange={handlePageChange}
-              variant="outlined"
-              color="primary"
-            />
-          </Stack>
+          {showSpecialities.length === 0 ? (
+            <Typography variant="h6" color="text.secondary">
+              No specialities found{" "}
+            </Typography>
+          ) : (
+            <Stack spacing={2}>
+              <Pagination
+                count={totalPages}
+                page={currentPage}
+                onChange={handlePageChange}
+                variant="outlined"
+                color="primary"
+              />
+            </Stack>
+          )}
         </Box>
       </section>
     </Box>

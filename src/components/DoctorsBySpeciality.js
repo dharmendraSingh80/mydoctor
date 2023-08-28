@@ -44,7 +44,7 @@ function DoctorsBySpeciality({ mobileOpen, handleDrawerToggle }) {
       >
         {isLoading ? (
           <Typography variant="body1" color="text.secondary">
-            Searching for: "{speciality}"
+            Searching for: "{speciality}" {name ? ` in "${name}"` : ""}
           </Typography>
         ) : doctors.length > 0 ? (
           <Box>
@@ -58,6 +58,7 @@ function DoctorsBySpeciality({ mobileOpen, handleDrawerToggle }) {
               <Box sx={{ flexGrow: 1 }}>
                 <Typography variant="h6">
                   Showing Results for: '{speciality}'
+                  {name ? ` in "${name}"` : ""}
                 </Typography>
                 <Typography
                   sx={{ padding: "1rem 0" }}
@@ -115,7 +116,7 @@ function DoctorsBySpeciality({ mobileOpen, handleDrawerToggle }) {
           </Box>
         ) : (
           <Typography variant="body1" color="text.secondary">
-            No results found for "{speciality}"
+            No results found for "{speciality}"{name ? ` in "${name}"` : ""}
           </Typography>
         )}
       </Box>

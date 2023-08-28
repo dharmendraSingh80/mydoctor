@@ -11,6 +11,7 @@ import CircleOutlinedIcon from "@mui/icons-material/CircleOutlined";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import { days, months, years } from "../../utils/date";
 import { Link } from "react-router-dom";
+import { checkIfExists } from "../../api";
 
 const RegistrationForm = () => {
   const [formData, setFormData] = useState({
@@ -91,6 +92,7 @@ const RegistrationForm = () => {
 
     setInputErrors((prev) => {
       const stateObj = { ...prev, [name]: "" };
+      const promises = [];
 
       switch (name) {
         case "fullName":
@@ -103,15 +105,12 @@ const RegistrationForm = () => {
         case "mobileNumber":
           if (!value || !/^[0-9]{10}$/.test(value)) {
             stateObj[name] = "Please enter a valid 10-digit mobile number!";
-          } else {
-            stateObj[name] = "";
           }
           break;
+
         case "email":
           if (!value || !/\S+@\S+\.\S+/.test(value)) {
             stateObj[name] = "Please enter a valid e-mail address!";
-          } else {
-            stateObj[name] = "";
           }
           break;
 
@@ -143,7 +142,6 @@ const RegistrationForm = () => {
         default:
           break;
       }
-
       return stateObj;
     });
   };
@@ -232,6 +230,33 @@ const RegistrationForm = () => {
       year: currentYear.toString(),
     }));
   }, []);
+
+  useEffect(() => {
+    if (formData.mobileNumber) {
+      checkIfExists(formData.mobileNumber, "contactNumber").then((data) => {
+        if (data.code === 433) {
+          setInputErrors((prev) => {
+            return {
+              ...prev,
+              mobileNumber: "Mobile number already exists!",
+            };
+          });
+        }
+      });
+    }
+    if (formData.email) {
+      checkIfExists(formData.email, "email").then((result) => {
+        if (result.code === 433) {
+          setInputErrors((prev) => {
+            return {
+              ...prev,
+              email: "Email address already exists!",
+            };
+          });
+        }
+      });
+    }
+  }, [formData.mobileNumber, formData.email]);
 
   return (
     <div className={styles.registration_form_container}>

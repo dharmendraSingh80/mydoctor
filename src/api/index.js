@@ -59,3 +59,11 @@ export async function getDoctorsBySpeciality(speciality, name = "") {
   data = await data.json();
   return data;
 }
+
+export async function checkIfExists(searchParam, type) {
+  let data = await fetch(
+    `${process.env.REACT_APP_BASE_URL}/accounts?${type}=${searchParam}`
+  );
+  data = await data.json();
+  return data;
+}

@@ -4,8 +4,9 @@ import DoctorDetailsCard from "./pages/DoctorDetailsCard";
 import AccordionDoctor from "./pages/AccordianDoctor";
 import { useEffect, useState } from "react";
 import { getDoctorDetails, getNumbersOfSlots } from "../api";
+import ResponsiveDrawer from "./pages/SideBar";
 
-export default function Doctor() {
+export default function Doctor({ mobileOpen, handleDrawerToggle }) {
   const [doctor, setDoctor] = useState({
     doctorDetails: "",
     slots: [],
@@ -22,31 +23,36 @@ export default function Doctor() {
         }));
       }
     );
-  }, []);
+  }, [id]);
 
   return (
-    // <Box sx={styles.main}>
-    <Box sx={styles.wrapper}>
-      <Box sx={styles.doctorContainer}>
-        <Box sx={styles.details}>
-          <Box sx={styles.docCard}>
-            <DoctorDetailsCard content={doctor.doctorDetails} />
-          </Box>
-          <Box sx={styles.docCard}>
-            <Typography>
-              {doctor?.slots.length === 0 ? (
-                "No slots available"
-              ) : (
-                <ul>
-                  {doctor?.slots.map((slot) => (
-                    <li key={slot._id}>{slot.startTime}</li>
-                  ))}
-                </ul>
-              )}
-            </Typography>
-          </Box>
-          <Box sx={styles.accordianDoc}>
-            <AccordionDoctor content={doctor.doctorDetails} />
+    <Box sx={{ display: "flex" }}>
+      <ResponsiveDrawer
+        mobileOpen={mobileOpen}
+        handleDrawerToggle={handleDrawerToggle}
+      />
+      <Box sx={styles.wrapper}>
+        <Box sx={styles.doctorContainer}>
+          <Box sx={styles.details}>
+            <Box sx={styles.docCard}>
+              <DoctorDetailsCard content={doctor.doctorDetails} />
+            </Box>
+            <Box sx={styles.docCard}>
+              <Typography>
+                {doctor?.slots.length === 0 ? (
+                  "No slots available"
+                ) : (
+                  <ul>
+                    {doctor?.slots.map((slot) => (
+                      <li key={slot._id}>{slot.startTime}</li>
+                    ))}
+                  </ul>
+                )}
+              </Typography>
+            </Box>
+            <Box sx={styles.accordianDoc}>
+              <AccordionDoctor content={doctor.doctorDetails} />
+            </Box>
           </Box>
         </Box>
       </Box>

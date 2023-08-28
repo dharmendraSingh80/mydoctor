@@ -139,7 +139,7 @@ function Navbar({ handleDrawerToggle, dataSpeciality }) {
         </div>
 
         <div className={styles.menuContainer}>
-          <Button variant="contained" color="primary" href="/login">
+          <Button variant="contained" color="primary" href="/auth/login">
             LOGIN
           </Button>
         </div>

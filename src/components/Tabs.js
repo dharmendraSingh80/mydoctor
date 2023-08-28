@@ -11,9 +11,10 @@ import loginIcon from "../myIcon/login.svg";
 import patientRegisterImage from "../myIcon/final registration.svg";
 import PatientRegistrationForm from "./pages/PatientRegistrationForm";
 import DoctorSignUpForm from "./pages/DoctorSignUp";
+import { Link } from "react-router-dom";
 
 export default function LabTabs() {
-  const [value, setValue] = React.useState("1");
+  const [value, setValue] = React.useState("login");
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -37,7 +38,12 @@ export default function LabTabs() {
             onChange={handleChange}
             aria-label="wrapped label tabs example"
           >
-            <Tab label="LOGIN" value="1" />
+            <Tab
+              label="LOGIN"
+              value="login"
+              component={Link}
+              to="/auth/login"
+            />
             <Divider
               orientation="vertical"
               style={{
@@ -45,7 +51,12 @@ export default function LabTabs() {
                 alignSelf: "center",
               }}
             />
-            <Tab label="PATIENT SIGN UP" value="2" />
+            <Tab
+              label="PATIENT SIGN UP"
+              value="signup"
+              component={Link}
+              to="/auth/signup"
+            />
             <Divider
               orientation="vertical"
               style={{
@@ -53,13 +64,18 @@ export default function LabTabs() {
                 alignSelf: "center",
               }}
             />
-            <Tab label="DOCTOR SIGN UP" value="3" />
+            <Tab
+              label="DOCTOR SIGN UP"
+              value="doctor-register"
+              component={Link}
+              to="/auth/doctor-register"
+            />
           </TabList>
         </Box>
       </Box>
       <Box sx={{ display: "flex", justifyContent: "center" }}>
         <Box sx={{ width: { xs: "0", md: "60%" } }}>
-          {value === "1" ? (
+          {value === "login" ? (
             <img
               className={styles.image}
               src={loginIcon}
@@ -80,13 +96,13 @@ export default function LabTabs() {
             ml: { lg: "10rem", md: "4rem" },
           }}
         >
-          <TabPanel sx={{ p: 0, pt: 4 }} value="1">
+          <TabPanel sx={{ p: 0, pt: 4 }} value="login">
             <LoginForm />
           </TabPanel>
-          <TabPanel sx={{ p: 0, pt: 4 }} value="2">
+          <TabPanel sx={{ p: 0, pt: 4 }} value="signup">
             <PatientRegistrationForm />
           </TabPanel>
-          <TabPanel sx={{ p: 0, pt: 4 }} value="3">
+          <TabPanel sx={{ p: 0, pt: 4 }} value="doctor-register">
             <DoctorSignUpForm />
           </TabPanel>
         </Box>

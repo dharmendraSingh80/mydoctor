@@ -13,7 +13,7 @@ import BubbleChartSharpIcon from "@mui/icons-material/BubbleChartSharp";
 import CloseIcon from "@mui/icons-material/Close";
 import IconButton from "@mui/material/IconButton";
 import { styled } from "@mui/material/styles";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 const drawerWidth = 240;
 const DrawerHeader = styled("div")(({ theme }) => ({
@@ -26,7 +26,9 @@ const DrawerHeader = styled("div")(({ theme }) => ({
 }));
 
 function ResponsiveDrawer(props) {
-  const [selectedItem, setSelectedItem] = React.useState(0); // State to keep track of selected item
+  const location = useLocation();
+  const isHomeRoute = location.pathname === "/";
+  const [selectedItem, setSelectedItem] = React.useState(isHomeRoute ? 0 : "");
 
   const handleItemClick = (index) => {
     setSelectedItem(index);
