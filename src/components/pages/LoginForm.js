@@ -1,14 +1,40 @@
-import React from "react";
+import React, { useState } from "react";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { userLogin } from "../../api";
+import { Alert } from "@mui/material";
 
-function LoginForm() {
-  const handleSubmit = (event) => {
+function LoginForm({ setUserData }) {
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+  const [alert, setAlert] = useState(null);
+  const navigate = useNavigate();
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    // Add  login logic here
+    const response = await userLogin(formData);
+    if (response.user) {
+      setUserData(response);
+      navigate("/");
+    } else {
+      setAlert(
+        <Alert sx={{ mb: "20px" }} severity="error">
+          Mobile Number/Email or password is incorrect. Please try again.
+        </Alert>
+      );
+    }
   };
 
   return (
@@ -21,15 +47,18 @@ function LoginForm() {
         }}
       >
         <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
+          {alert}
           <TextField
             margin="normal"
             required
             fullWidth
-            id="username"
+            id="email"
             label="Email or Mobile Number"
-            name="username"
-            autoComplete="username"
+            name="email"
+            autoComplete="email"
             autoFocus
+            value={formData.email}
+            onChange={handleChange}
           />
           <TextField
             margin="normal"
@@ -40,6 +69,8 @@ function LoginForm() {
             type="password"
             id="password"
             autoComplete="current-password"
+            value={formData.password}
+            onChange={handleChange}
           />
           <Box
             sx={{
@@ -59,7 +90,7 @@ function LoginForm() {
             <Link to="/">Forget password</Link>
           </Box>
           <p>
-            Don't have an account <Link to="/">Sign up</Link>
+            Don't have an account <Link to="/auth/signup">Sign up</Link>
           </p>
         </Box>
       </Box>

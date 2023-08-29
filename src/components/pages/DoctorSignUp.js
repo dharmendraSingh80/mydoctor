@@ -10,19 +10,21 @@ import CheckCircleOutlineOutlinedIcon from "@mui/icons-material/CheckCircleOutli
 import CircleOutlinedIcon from "@mui/icons-material/CircleOutlined";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import { Link } from "react-router-dom";
+import { checkIfExists, signUpDoctor } from "../../api";
+import { Alert } from "@mui/material";
 
 const DoctorSignUpForm = () => {
   const [formData, setFormData] = useState({
     fullName: "",
     gender: "male",
-    mobileNumber: "",
+    contactNumber: "",
     email: "",
     password: "",
     confirmPassword: "",
   });
   const [inputErrors, setInputErrors] = useState({
     fullName: "",
-    mobileNumber: "",
+    contactNumber: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -37,16 +39,36 @@ const DoctorSignUpForm = () => {
     passwordLength: "",
     match: "",
   });
+  const [alert, setAlert] = useState(null);
 
-  const handleInputChange = (event) => {
+  const handleInputChange = async (event) => {
     const { name, value } = event.target;
 
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
     }));
+    if (name === "contactNumber" || name === "email") {
+      try {
+        const response = await checkIfExists(value, name);
 
-    if (name === "password" || name === "confirmPassword") {
+        setInputErrors((prev) => ({
+          ...prev,
+          [name]:
+            response.code === 433
+              ? name === "contactNumber"
+                ? "Mobile number already exists!"
+                : "Email already exists!"
+              : "",
+        }));
+      } catch (error) {
+        console.error("Error:", error);
+        setInputErrors((prev) => ({
+          ...prev,
+          [name]: `Error checking ${name}`,
+        }));
+      }
+    } else if (name === "password" || name === "confirmPassword") {
       if (!value) {
         setInputErrors((prev) => {
           return {
@@ -60,68 +82,94 @@ const DoctorSignUpForm = () => {
     }
   };
 
-  const validateInput = (e) => {
+  const validateInput = async (e) => {
     let { name, value } = e.target;
+    if (name === "contactNumber" || name === "email") {
+      try {
+        const response = await checkIfExists(value, name);
+        setInputErrors((prev) => {
+          const stateObj = { ...prev, [name]: "" };
+          switch (name) {
+            case "contactNumber":
+              if (!value || !/^[0-9]{10}$/.test(value)) {
+                stateObj[name] = "Please enter a valid 10-digit mobile number!";
+              } else {
+                if (response.code === 433) {
+                  stateObj[name] = "Mobile number already exists!";
+                } else {
+                  stateObj[name] = "";
+                }
+              }
+              break;
 
-    setInputErrors((prev) => {
-      const stateObj = { ...prev, [name]: "" };
-
-      switch (name) {
-        case "fullName":
-          if (!value) {
-            stateObj[name] = "Please enter a valid name!";
-          } else {
-            stateObj[name] = "";
+            case "email":
+              if (!value || !/\S+@\S+\.\S+/.test(value)) {
+                stateObj[name] = "Please enter a valid e-mail address!";
+              } else {
+                if (response.code === 433) {
+                  stateObj[name] = "Email already exists!";
+                } else {
+                  stateObj[name] = "";
+                }
+              }
+              break;
+            default:
+              break;
           }
-          break;
-        case "mobileNumber":
-          if (!value || !/^[0-9]{10}$/.test(value)) {
-            stateObj[name] = "Please enter a valid 10-digit mobile number!";
-          } else {
-            stateObj[name] = "";
-          }
-          break;
-        case "email":
-          if (!value || !/\S+@\S+\.\S+/.test(value)) {
-            stateObj[name] = "Please enter a valid e-mail address!";
-          } else {
-            stateObj[name] = "";
-          }
-          break;
-
-        case "password":
-          if (!value) {
-            stateObj[name] = "Password cannot be empty!";
-          } else {
-            validatePassword(value);
-            stateObj[name] = "";
-          }
-          break;
-
-        case "confirmPassword":
-          if (!value) {
-            stateObj[name] = "Please enter Confirm Password.";
-          } else if (formData.password && value === formData.password) {
-            setPasswordChecks((prev) => {
-              return { ...prev, match: "checked" };
-            });
-            stateObj[name] = "";
-          } else {
-            setPasswordChecks((prev) => {
-              return { ...prev, match: "unchecked" };
-            });
-            stateObj[name] = "";
-          }
-          break;
-
-        default:
-          break;
+          return stateObj;
+        });
+      } catch (error) {
+        console.error("Error:", error);
+        setInputErrors((prev) => ({
+          ...prev,
+          [name]: `Error checking ${name}`,
+        }));
       }
+    } else {
+      setInputErrors((prev) => {
+        const stateObj = { ...prev, [name]: "" };
 
-      return stateObj;
-    });
+        switch (name) {
+          case "fullName":
+            if (!value) {
+              stateObj[name] = "Please enter a valid name!";
+            } else {
+              stateObj[name] = "";
+            }
+            break;
+          case "password":
+            if (!value) {
+              stateObj[name] = "Password cannot be empty!";
+            } else {
+              validatePassword(value);
+              stateObj[name] = "";
+            }
+            break;
+
+          case "confirmPassword":
+            if (!value) {
+              stateObj[name] = "Please enter Confirm Password.";
+            } else if (formData.password && value === formData.password) {
+              setPasswordChecks((prev) => {
+                return { ...prev, match: "checked" };
+              });
+              stateObj[name] = "";
+            } else {
+              setPasswordChecks((prev) => {
+                return { ...prev, match: "unchecked" };
+              });
+              stateObj[name] = "";
+            }
+            break;
+
+          default:
+            break;
+        }
+
+        return stateObj;
+      });
+    }
   };
-
   const validatePassword = (value) => {
     setPasswordChecks((prev) => {
       const passwordObj = { ...prev };
@@ -167,7 +215,7 @@ const DoctorSignUpForm = () => {
     });
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     // Check for unfilled inputs and set errors
@@ -179,10 +227,38 @@ const DoctorSignUpForm = () => {
     }
     setInputErrors(newInputErrors);
 
-    // Check if there are any errors
-    if (Object.keys(newInputErrors).length === 0) {
-      console.log(formData); // Handle form submission logic here
+    const doctorDetails = {
+      firstName: formData.fullName,
+      gender: formData.gender,
+      email: formData.email,
+      password: formData.password,
+      contactNumber: formData.contactNumber,
+    };
+    const response = await signUpDoctor(doctorDetails);
+    if (response.enabled) {
+      setAlert(<Alert severity="success">Signed up successfully!</Alert>);
+    } else {
+      setAlert(
+        <Alert severity="error">Registration failed. Please try again.</Alert>
+      );
     }
+    setFormData({
+      fullName: "",
+      gender: "male",
+      contactNumber: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    });
+    setPasswordChecks({
+      isOpen: false,
+      lowercase: "",
+      uppercase: "",
+      specialChar: "",
+      number: "",
+      passwordLength: "",
+      match: "",
+    });
   };
 
   const handlePasswordCheck = () => {
@@ -194,6 +270,7 @@ const DoctorSignUpForm = () => {
   return (
     <div className={styles.registration_form_container}>
       <h2 className={styles.form_title}>Create An Account</h2>
+      {alert}
       <form className={styles.registration_form} onSubmit={handleSubmit}>
         <div className={styles.registration_form_child}>
           <label className={styles.label_tag}>Full Name*</label>
@@ -245,19 +322,19 @@ const DoctorSignUpForm = () => {
           <label className={styles.label_tag}>Mobile Number*</label>
           <input
             type="tel"
-            name="mobileNumber"
-            value={formData.mobileNumber}
+            name="contactNumber"
+            value={formData.contactNumber}
             onChange={handleInputChange}
             placeholder="Enter Mobile Number"
             onBlur={validateInput}
             className={`${styles.input} ${
-              inputErrors.mobileNumber ? styles.errorBorder : ""
+              inputErrors.contactNumber ? styles.errorBorder : ""
             }`}
             maxLength="10"
             required
           />
-          {inputErrors.mobileNumber && (
-            <p className={styles.error}>{inputErrors.mobileNumber}</p>
+          {inputErrors.contactNumber && (
+            <p className={styles.error}>{inputErrors.contactNumber}</p>
           )}
         </div>
         <div className={styles.registration_form_child}>
@@ -393,7 +470,7 @@ const DoctorSignUpForm = () => {
               passwordChecks.passwordLength === "checked" &&
               passwordChecks.specialChar === "checked" &&
               inputErrors.fullName === "" &&
-              inputErrors.mobileNumber === "" &&
+              inputErrors.contactNumber === "" &&
               inputErrors.email === "" &&
               inputErrors.password === "" &&
               inputErrors.confirmPassword === ""
@@ -403,7 +480,7 @@ const DoctorSignUpForm = () => {
           REGISTER
         </Button>
         <p>
-          Already have an account? <Link href="/">Sign in</Link>
+          Already have an account? <Link href="/auth/login">Sign in</Link>
         </p>
       </form>
     </div>

@@ -23,6 +23,8 @@ function App() {
     totalDoctors: 0,
   });
 
+  const [userData, setUserData] = useState(null);
+
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
@@ -77,12 +79,17 @@ function App() {
         <Navbar
           handleDrawerToggle={handleDrawerToggle}
           dataSpeciality={info.speciality}
+          userData={userData}
+          setUserData={setUserData}
         />
         <Box sx={{ marginTop: { xs: "14rem", md: "9rem" } }}>
           <Routes>
             <Route path="/" element={doctors} />
             <Route path="/specialities" element={specialities} />
-            <Route path="/auth/:tabValue" element={<Login />} />
+            <Route
+              path="/auth/:tabValue"
+              element={<Login setUserData={setUserData} />}
+            />
             <Route
               path="/doctor/:id"
               element={

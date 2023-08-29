@@ -11,7 +11,8 @@ import CircleOutlinedIcon from "@mui/icons-material/CircleOutlined";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import { days, months, years } from "../../utils/date";
 import { Link } from "react-router-dom";
-import { checkIfExists } from "../../api";
+import { checkIfExists, signUpPatient } from "../../api";
+import { Alert } from "@mui/material";
 
 const RegistrationForm = () => {
   const [formData, setFormData] = useState({
@@ -20,14 +21,14 @@ const RegistrationForm = () => {
     day: "",
     month: "",
     year: "",
-    mobileNumber: "",
+    contactNumber: "",
     email: "",
     password: "",
     confirmPassword: "",
   });
   const [inputErrors, setInputErrors] = useState({
     fullName: "",
-    mobileNumber: "",
+    contactNumber: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -42,8 +43,9 @@ const RegistrationForm = () => {
     passwordLength: "",
     match: "",
   });
+  const [alert, setAlert] = useState(null);
 
-  const handleInputChange = (event) => {
+  const handleInputChange = async (event) => {
     const { name, value } = event.target;
 
     setFormData((prevData) => ({
@@ -51,31 +53,27 @@ const RegistrationForm = () => {
       [name]: value,
     }));
 
-    // if (name === "year" || name === "month") {
-    //   const daysInMonth = new Date(formData.year, formData.month, 0).getDate();
-    //   const currentMonth = new Date().getMonth() + 1;
-    //   const currentDay = new Date().getDate();
-    //   const availableMonths =
-    //     parseInt(formData.year) === currentYear
-    //       ? months.slice(0, new Date().getMonth() + 1)
-    //       : months;
-    //   const availableDays =
-    //     parseInt(formData.year) === currentYear &&
-    //     parseInt(formData.month) === currentMonth
-    //       ? currentDay
-    //       : daysInMonth;
+    if (name === "contactNumber" || name === "email") {
+      try {
+        const response = await checkIfExists(value, name);
 
-    //   setFormData((prevData) => ({
-    //     ...prevData,
-    //     day: Math.min(prevData.day, availableDays),
-    //     month:
-    //       prevData.year === currentYear
-    //         ? Math.min(prevData.month, currentMonth.toString().padStart(2, "0"))
-    //         : prevData.month,
-    //   }));
-    // }
-
-    if (name === "password" || name === "confirmPassword") {
+        setInputErrors((prev) => ({
+          ...prev,
+          [name]:
+            response.code === 433
+              ? name === "contactNumber"
+                ? "Mobile number already exists!"
+                : "Email already exists!"
+              : "",
+        }));
+      } catch (error) {
+        console.error("Error:", error);
+        setInputErrors((prev) => ({
+          ...prev,
+          [name]: `Error checking ${name}`,
+        }));
+      }
+    } else if (name === "password" || name === "confirmPassword") {
       if (!value) {
         setInputErrors((prev) => ({
           ...prev,
@@ -87,63 +85,93 @@ const RegistrationForm = () => {
     }
   };
 
-  const validateInput = (e) => {
+  const validateInput = async (e) => {
     let { name, value } = e.target;
+    if (name === "contactNumber" || name === "email") {
+      try {
+        const response = await checkIfExists(value, name);
+        setInputErrors((prev) => {
+          const stateObj = { ...prev, [name]: "" };
+          switch (name) {
+            case "contactNumber":
+              if (!value || !/^[0-9]{10}$/.test(value)) {
+                stateObj[name] = "Please enter a valid 10-digit mobile number!";
+              } else {
+                if (response.code === 433) {
+                  stateObj[name] = "Mobile number already exists!";
+                } else {
+                  stateObj[name] = "";
+                }
+              }
+              break;
 
-    setInputErrors((prev) => {
-      const stateObj = { ...prev, [name]: "" };
-      const promises = [];
-
-      switch (name) {
-        case "fullName":
-          if (!value) {
-            stateObj[name] = "Please enter a valid name!";
-          } else {
-            stateObj[name] = "";
+            case "email":
+              if (!value || !/\S+@\S+\.\S+/.test(value)) {
+                stateObj[name] = "Please enter a valid e-mail address!";
+              } else {
+                if (response.code === 433) {
+                  stateObj[name] = "Email already exists!";
+                } else {
+                  stateObj[name] = "";
+                }
+              }
+              break;
+            default:
+              break;
           }
-          break;
-        case "mobileNumber":
-          if (!value || !/^[0-9]{10}$/.test(value)) {
-            stateObj[name] = "Please enter a valid 10-digit mobile number!";
-          }
-          break;
-
-        case "email":
-          if (!value || !/\S+@\S+\.\S+/.test(value)) {
-            stateObj[name] = "Please enter a valid e-mail address!";
-          }
-          break;
-
-        case "password":
-          if (!value) {
-            stateObj[name] = "Password cannot be empty!";
-          } else {
-            validatePassword(value);
-            stateObj[name] = "";
-          }
-          break;
-
-        case "confirmPassword":
-          if (!value) {
-            stateObj[name] = "Please enter Confirm Password.";
-          } else if (formData.password && value === formData.password) {
-            setPasswordChecks((prev) => {
-              return { ...prev, match: "checked" };
-            });
-            stateObj[name] = "";
-          } else {
-            setPasswordChecks((prev) => {
-              return { ...prev, match: "unchecked" };
-            });
-            stateObj[name] = "";
-          }
-          break;
-
-        default:
-          break;
+          return stateObj;
+        });
+      } catch (error) {
+        console.error("Error:", error);
+        setInputErrors((prev) => ({
+          ...prev,
+          [name]: `Error checking ${name}`,
+        }));
       }
-      return stateObj;
-    });
+    } else {
+      setInputErrors((prev) => {
+        const stateObj = { ...prev, [name]: "" };
+
+        switch (name) {
+          case "fullName":
+            if (!value) {
+              stateObj[name] = "Please enter a valid name!";
+            } else {
+              stateObj[name] = "";
+            }
+            break;
+          case "password":
+            if (!value) {
+              stateObj[name] = "Password cannot be empty!";
+            } else {
+              validatePassword(value);
+              stateObj[name] = "";
+            }
+            break;
+
+          case "confirmPassword":
+            if (!value) {
+              stateObj[name] = "Please enter Confirm Password.";
+            } else if (formData.password && value === formData.password) {
+              setPasswordChecks((prev) => {
+                return { ...prev, match: "checked" };
+              });
+              stateObj[name] = "";
+            } else {
+              setPasswordChecks((prev) => {
+                return { ...prev, match: "unchecked" };
+              });
+              stateObj[name] = "";
+            }
+            break;
+
+          default:
+            break;
+        }
+
+        return stateObj;
+      });
+    }
   };
 
   const validatePassword = (value) => {
@@ -191,22 +219,56 @@ const RegistrationForm = () => {
     });
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     // Check for unfilled inputs and set errors
     const newInputErrors = {};
     for (const field in formData) {
       if (formData[field] === "") {
-        newInputErrors[field] = true;
+        newInputErrors[field] = "Please fill this data!";
       }
     }
     setInputErrors(newInputErrors);
 
-    // Check if there are any errors
-    if (Object.keys(newInputErrors).length === 0) {
-      console.log(formData); // Handle form submission logic here
+    const userDetails = {
+      firstName: formData.fullName,
+      gender: formData.gender,
+      email: formData.email,
+      password: formData.password,
+      contactNumber: formData.contactNumber,
+      profile: {
+        dob: `${formData.year}-${formData.month}-${formData.day}`,
+      },
+    };
+    const response = await signUpPatient(userDetails);
+    if (response.enabled) {
+      setAlert(<Alert severity="success">Signed up successfully!</Alert>);
+    } else {
+      setAlert(
+        <Alert severity="error">Registration failed. Please try again.</Alert>
+      );
     }
+    setFormData({
+      fullName: "",
+      gender: "male",
+      day: "",
+      month: "",
+      year: "",
+      contactNumber: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    });
+    setPasswordChecks({
+      isOpen: false,
+      lowercase: "",
+      uppercase: "",
+      specialChar: "",
+      number: "",
+      passwordLength: "",
+      match: "",
+    });
   };
 
   const handlePasswordCheck = () => {
@@ -231,35 +293,9 @@ const RegistrationForm = () => {
     }));
   }, []);
 
-  useEffect(() => {
-    if (formData.mobileNumber) {
-      checkIfExists(formData.mobileNumber, "contactNumber").then((data) => {
-        if (data.code === 433) {
-          setInputErrors((prev) => {
-            return {
-              ...prev,
-              mobileNumber: "Mobile number already exists!",
-            };
-          });
-        }
-      });
-    }
-    if (formData.email) {
-      checkIfExists(formData.email, "email").then((result) => {
-        if (result.code === 433) {
-          setInputErrors((prev) => {
-            return {
-              ...prev,
-              email: "Email address already exists!",
-            };
-          });
-        }
-      });
-    }
-  }, [formData.mobileNumber, formData.email]);
-
   return (
     <div className={styles.registration_form_container}>
+      {alert}
       <h2 className={styles.form_title}>Create An Account</h2>
       <form className={styles.registration_form} onSubmit={handleSubmit}>
         <div className={styles.registration_form_child}>
@@ -359,19 +395,19 @@ const RegistrationForm = () => {
           <label className={styles.label_tag}>Mobile Number*</label>
           <input
             type="tel"
-            name="mobileNumber"
-            value={formData.mobileNumber}
+            name="contactNumber"
+            value={formData.contactNumber}
             onChange={handleInputChange}
             placeholder="Enter Mobile Number"
             onBlur={validateInput}
             className={`${styles.input} ${
-              inputErrors.mobileNumber ? styles.errorBorder : ""
+              inputErrors.contactNumber ? styles.errorBorder : ""
             }`}
             maxLength="10"
             required
           />
-          {inputErrors.mobileNumber && (
-            <p className={styles.error}>{inputErrors.mobileNumber}</p>
+          {inputErrors.contactNumber && (
+            <p className={styles.error}>{inputErrors.contactNumber}</p>
           )}
         </div>
         <div className={styles.registration_form_child}>
@@ -507,7 +543,7 @@ const RegistrationForm = () => {
               passwordChecks.passwordLength === "checked" &&
               passwordChecks.specialChar === "checked" &&
               inputErrors.fullName === "" &&
-              inputErrors.mobileNumber === "" &&
+              inputErrors.contactNumber === "" &&
               inputErrors.email === "" &&
               inputErrors.password === "" &&
               inputErrors.confirmPassword === ""
@@ -517,7 +553,7 @@ const RegistrationForm = () => {
           REGISTER
         </Button>
         <p>
-          Already have an account? <Link to="/">Sign in</Link>
+          Already have an account? <Link to="/auth/login">Sign in</Link>
         </p>
       </form>
     </div>

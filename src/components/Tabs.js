@@ -11,14 +11,25 @@ import loginIcon from "../myIcon/login.svg";
 import patientRegisterImage from "../myIcon/final registration.svg";
 import PatientRegistrationForm from "./pages/PatientRegistrationForm";
 import DoctorSignUpForm from "./pages/DoctorSignUp";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
-export default function LabTabs() {
-  const [value, setValue] = React.useState("login");
+export default function LabTabs({ setUserData }) {
+  const [value, setValue] = React.useState("");
+  const location = useLocation();
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
+  React.useEffect(() => {
+    // Update activeTab based on location.pathname
+    if (location.pathname === "/auth/login") {
+      setValue("login");
+    } else if (location.pathname === "/auth/signup") {
+      setValue("signup");
+    } else if (location.pathname === "/auth/doctor-register") {
+      setValue("doctor-register");
+    }
+  }, [location.pathname]);
 
   return (
     <TabContext value={value}>
@@ -97,7 +108,7 @@ export default function LabTabs() {
           }}
         >
           <TabPanel sx={{ p: 0, pt: 4 }} value="login">
-            <LoginForm />
+            <LoginForm setUserData={setUserData} />
           </TabPanel>
           <TabPanel sx={{ p: 0, pt: 4 }} value="signup">
             <PatientRegistrationForm />

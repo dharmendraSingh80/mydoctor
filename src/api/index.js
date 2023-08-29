@@ -67,3 +67,58 @@ export async function checkIfExists(searchParam, type) {
   data = await data.json();
   return data;
 }
+
+export async function signUpPatient(data) {
+  try {
+    let response = await fetch(`${process.env.REACT_APP_BASE_URL}/patients`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    const responseData = await response.json();
+    return responseData;
+  } catch (error) {
+    console.error("Error:", error);
+    throw error;
+  }
+}
+
+export async function signUpDoctor(data) {
+  try {
+    let response = await fetch(`${process.env.REACT_APP_BASE_URL}/doctors`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+    const responseData = await response.json();
+    return responseData;
+  } catch (error) {
+    console.error("Error:", error);
+    throw error;
+  }
+}
+
+export async function userLogin(data) {
+  try {
+    let response = await fetch(
+      `${process.env.REACT_APP_BASE_URL}/authentication`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ ...data, strategy: "local" }),
+      }
+    );
+    const responseData = await response.json();
+    return responseData;
+  } catch (error) {
+    console.error("Error:", error);
+    throw error;
+  }
+}

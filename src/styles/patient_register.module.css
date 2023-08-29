@@ -83,6 +83,8 @@ select */
 .icon {
     padding: 0;
     margin: 0;
+    display: flex;
+    align-items: center;
 }
 
 /* .submit_button {

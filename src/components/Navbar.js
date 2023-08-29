@@ -5,18 +5,31 @@ import styles from "../styles/navbar.module.css";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
-import { Box, IconButton } from "@mui/material";
+import {
+  Box,
+  IconButton,
+  ClickAwayListener,
+  Grow,
+  Paper,
+  Popper,
+  MenuItem,
+  MenuList,
+  Avatar,
+} from "@mui/material";
 // import MenuItem from "@mui/material/MenuItem";
 import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
 import { Link, useNavigate } from "react-router-dom";
 import Swiper from "./pages/Swiper";
 
-function Navbar({ handleDrawerToggle, dataSpeciality }) {
+function Navbar({ handleDrawerToggle, dataSpeciality, userData, setUserData }) {
   const [selectedValue, setSelectedValue] = useState({
     autocomplete: "",
     typeSearch: "",
   });
+  const [open, setOpen] = React.useState(false);
+  const anchorRef = React.useRef(null);
+
   const navigate = useNavigate();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
@@ -54,6 +67,37 @@ function Navbar({ handleDrawerToggle, dataSpeciality }) {
     navigate(url);
   };
 
+  const handleToggle = () => {
+    setOpen((prevOpen) => !prevOpen);
+  };
+
+  const handleClose = (event) => {
+    if (anchorRef.current && anchorRef.current.contains(event.target)) {
+      return;
+    }
+
+    setOpen(false);
+  };
+
+  function handleListKeyDown(event) {
+    if (event.key === "Tab") {
+      event.preventDefault();
+      setOpen(false);
+    } else if (event.key === "Escape") {
+      setOpen(false);
+    }
+  }
+
+  // return focus to the button when we transitioned from !open -> open
+  const prevOpen = React.useRef(open);
+  React.useEffect(() => {
+    if (prevOpen.current === true && open === false) {
+      anchorRef.current.focus();
+    }
+
+    prevOpen.current = open;
+  }, [open]);
+
   useEffect(() => {
     setSelectedValue((prev) => {
       return {
@@ -62,6 +106,7 @@ function Navbar({ handleDrawerToggle, dataSpeciality }) {
       };
     });
   }, [sp]);
+  console.log(userData);
 
   return (
     <div className={styles.nav_wrapper}>
@@ -139,9 +184,54 @@ function Navbar({ handleDrawerToggle, dataSpeciality }) {
         </div>
 
         <div className={styles.menuContainer}>
-          <Button variant="contained" color="primary" href="/auth/login">
-            LOGIN
-          </Button>
+          {!userData ? (
+            <Button variant="contained" color="primary" href="/auth/login">
+              LOGIN
+            </Button>
+          ) : (
+            <div>
+              <Box sx={{ mr: 1 }} ref={anchorRef} onClick={handleToggle}>
+                <Avatar src="/broken-image.jpg" />
+              </Box>
+
+              <Popper
+                open={open}
+                anchorEl={anchorRef.current}
+                role={undefined}
+                placement="bottom-start"
+                transition
+                disablePortal
+                sx={{ zIndex: 1222 }}
+              >
+                {({ TransitionProps, placement }) => (
+                  <Grow
+                    {...TransitionProps}
+                    style={{
+                      transformOrigin:
+                        placement === "bottom-start"
+                          ? "left top"
+                          : "left bottom",
+                    }}
+                  >
+                    <Paper>
+                      <ClickAwayListener onClickAway={handleClose}>
+                        <MenuList
+                          autoFocusItem={open}
+                          id="composition-menu"
+                          aria-labelledby="composition-button"
+                          onKeyDown={handleListKeyDown}
+                        >
+                          <MenuItem onClick={handleClose}>Profile</MenuItem>
+                          <MenuItem onClick={handleClose}>My account</MenuItem>
+                          <MenuItem onClick={handleClose}>Logout</MenuItem>
+                        </MenuList>
+                      </ClickAwayListener>
+                    </Paper>
+                  </Grow>
+                )}
+              </Popper>
+            </div>
+          )}
         </div>
       </nav>
       <Box
