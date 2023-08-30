@@ -13,7 +13,7 @@ import PatientRegistrationForm from "./pages/PatientRegistrationForm";
 import DoctorSignUpForm from "./pages/DoctorSignUp";
 import { Link, useLocation } from "react-router-dom";
 
-export default function LabTabs({ setUserData }) {
+export default function LabTabs() {
   const [value, setValue] = React.useState("");
   const location = useLocation();
 
@@ -108,7 +108,7 @@ export default function LabTabs({ setUserData }) {
           }}
         >
           <TabPanel sx={{ p: 0, pt: 4 }} value="login">
-            <LoginForm setUserData={setUserData} />
+            <LoginForm />
           </TabPanel>
           <TabPanel sx={{ p: 0, pt: 4 }} value="signup">
             <PatientRegistrationForm />

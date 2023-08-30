@@ -7,7 +7,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { userLogin } from "../../api";
 import { Alert } from "@mui/material";
 
-function LoginForm({ setUserData }) {
+function LoginForm() {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -26,7 +26,7 @@ function LoginForm({ setUserData }) {
     event.preventDefault();
     const response = await userLogin(formData);
     if (response.user) {
-      setUserData(response);
+      localStorage.setItem("userContext", JSON.stringify(response));
       navigate("/");
     } else {
       setAlert(

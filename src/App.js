@@ -11,6 +11,9 @@ import ResponsiveDrawer from "./components/pages/SideBar";
 import { getDoctors, getSpecialities } from "./api";
 import Doctor from "./components/Doctor";
 import DoctorsBySpeciality from "./components/DoctorsBySpeciality";
+import ProtectedRoute from "./components/ProtectedRoute";
+import Appointments from "./components/Appointments";
+import PatientProfile from "./components/PatientProfile";
 
 function App() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -22,8 +25,7 @@ function App() {
     totalSpeciality: 0,
     totalDoctors: 0,
   });
-
-  const [userData, setUserData] = useState(null);
+  let userData = JSON.parse(localStorage.getItem("userContext") || "null");
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -79,17 +81,12 @@ function App() {
         <Navbar
           handleDrawerToggle={handleDrawerToggle}
           dataSpeciality={info.speciality}
-          userData={userData}
-          setUserData={setUserData}
         />
         <Box sx={{ marginTop: { xs: "14rem", md: "9rem" } }}>
           <Routes>
             <Route path="/" element={doctors} />
             <Route path="/specialities" element={specialities} />
-            <Route
-              path="/auth/:tabValue"
-              element={<Login setUserData={setUserData} />}
-            />
+            <Route path="/auth/:tabValue" element={<Login />} />
             <Route
               path="/doctor/:id"
               element={
@@ -106,6 +103,28 @@ function App() {
                   mobileOpen={mobileOpen}
                   handleDrawerToggle={handleDrawerToggle}
                 />
+              }
+            />
+            <Route
+              path="/appointments"
+              element={
+                <ProtectedRoute userData={{ userData }}>
+                  <Appointments
+                    mobileOpen={mobileOpen}
+                    handleDrawerToggle={handleDrawerToggle}
+                  />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/myprofile"
+              element={
+                <ProtectedRoute userData={{ userData }}>
+                  <PatientProfile
+                    mobileOpen={mobileOpen}
+                    handleDrawerToggle={handleDrawerToggle}
+                  />
+                </ProtectedRoute>
               }
             />
           </Routes>

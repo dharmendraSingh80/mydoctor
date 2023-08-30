@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import myIcon from "../myIcon/logo.svg";
 import { useLocation } from "react-router-dom";
 import styles from "../styles/navbar.module.css";
@@ -15,26 +15,33 @@ import {
   MenuItem,
   MenuList,
   Avatar,
+  ListItemIcon,
 } from "@mui/material";
 // import MenuItem from "@mui/material/MenuItem";
 import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
 import { Link, useNavigate } from "react-router-dom";
 import Swiper from "./pages/Swiper";
+import PermIdentityIcon from "@mui/icons-material/PermIdentity";
+import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
+import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 
-function Navbar({ handleDrawerToggle, dataSpeciality, userData, setUserData }) {
+function Navbar({ handleDrawerToggle, dataSpeciality }) {
   const [selectedValue, setSelectedValue] = useState({
     autocomplete: "",
     typeSearch: "",
   });
-  const [open, setOpen] = React.useState(false);
-  const anchorRef = React.useRef(null);
+  const [open, setOpen] = useState(false);
+  const anchorRef = useRef(null);
 
   const navigate = useNavigate();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const sp = searchParams.get("sp");
   const specialityNames = dataSpeciality.map((item) => item.name);
+  // Retrieving user data
+  let userData = JSON.parse(localStorage.getItem("userContext") || "null");
+  const prevOpen = useRef(open);
 
   const handleAutocompleteChange = (event, value) => {
     setSelectedValue((prev) => {
@@ -75,7 +82,11 @@ function Navbar({ handleDrawerToggle, dataSpeciality, userData, setUserData }) {
     if (anchorRef.current && anchorRef.current.contains(event.target)) {
       return;
     }
+    setOpen(false);
+  };
 
+  const handleLogout = () => {
+    localStorage.removeItem("userContext");
     setOpen(false);
   };
 
@@ -88,13 +99,55 @@ function Navbar({ handleDrawerToggle, dataSpeciality, userData, setUserData }) {
     }
   }
 
+  const searchBarAndDropdown = (
+    <>
+      <div className={styles.dropdown}>
+        <Autocomplete
+          disablePortal
+          id="combo-box-demo"
+          options={specialityNames}
+          onChange={handleAutocompleteChange}
+          value={selectedValue.autocomplete}
+          sx={{
+            "& .MuiOutlinedInput-root": {
+              border: "none",
+            },
+            "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
+              border: "none",
+            },
+          }}
+          forcePopupIcon={false}
+          renderInput={(params) => (
+            <TextField {...params} placeholder="Select a Service" />
+          )}
+        />
+      </div>
+      <div className={styles.searchBar}>
+        <TextField
+          id="search"
+          placeholder="Search Doctors"
+          fullWidth
+          variant="outlined"
+          onChange={handleChange}
+          sx={{
+            "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
+              border: "none",
+            },
+          }}
+        />
+        <IconButton onClick={handleSearch} aria-label="search">
+          <SearchIcon fontSize="medium" />
+        </IconButton>
+      </div>
+    </>
+  );
+
   // return focus to the button when we transitioned from !open -> open
-  const prevOpen = React.useRef(open);
-  React.useEffect(() => {
-    if (prevOpen.current === true && open === false) {
+
+  useEffect(() => {
+    if (prevOpen.current && !open && anchorRef.current) {
       anchorRef.current.focus();
     }
-
     prevOpen.current = open;
   }, [open]);
 
@@ -106,7 +159,6 @@ function Navbar({ handleDrawerToggle, dataSpeciality, userData, setUserData }) {
       };
     });
   }, [sp]);
-  console.log(userData);
 
   return (
     <div className={styles.nav_wrapper}>
@@ -142,44 +194,7 @@ function Navbar({ handleDrawerToggle, dataSpeciality, userData, setUserData }) {
           </Box>
 
           <div className={styles.serviceDoctorsContainer}>
-            <div className={styles.dropdown}>
-              <Autocomplete
-                disablePortal
-                id="combo-box-demo"
-                options={specialityNames}
-                onChange={handleAutocompleteChange}
-                value={selectedValue.autocomplete}
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    border: "none",
-                  },
-                  "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-                    border: "none",
-                  },
-                }}
-                forcePopupIcon={false}
-                renderInput={(params) => (
-                  <TextField {...params} placeholder="Select a Service" />
-                )}
-              />
-            </div>
-            <div className={styles.searchBar}>
-              <TextField
-                id="search"
-                placeholder="Search Doctors"
-                fullWidth
-                variant="outlined"
-                onChange={handleChange}
-                sx={{
-                  "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-                    border: "none",
-                  },
-                }}
-              />
-              <IconButton onClick={handleSearch} aria-label="search">
-                <SearchIcon />
-              </IconButton>
-            </div>
+            {searchBarAndDropdown}
           </div>
         </div>
 
@@ -193,7 +208,6 @@ function Navbar({ handleDrawerToggle, dataSpeciality, userData, setUserData }) {
               <Box sx={{ mr: 1 }} ref={anchorRef} onClick={handleToggle}>
                 <Avatar src="/broken-image.jpg" />
               </Box>
-
               <Popper
                 open={open}
                 anchorEl={anchorRef.current}
@@ -221,9 +235,24 @@ function Navbar({ handleDrawerToggle, dataSpeciality, userData, setUserData }) {
                           aria-labelledby="composition-button"
                           onKeyDown={handleListKeyDown}
                         >
-                          <MenuItem onClick={handleClose}>Profile</MenuItem>
-                          <MenuItem onClick={handleClose}>My account</MenuItem>
-                          <MenuItem onClick={handleClose}>Logout</MenuItem>
+                          <MenuItem onClick={handleClose}>
+                            <ListItemIcon>
+                              <PermIdentityIcon />
+                            </ListItemIcon>
+                            Account Settings
+                          </MenuItem>
+                          <MenuItem onClick={handleClose}>
+                            <ListItemIcon>
+                              <CalendarTodayIcon />
+                            </ListItemIcon>
+                            My Appointments
+                          </MenuItem>
+                          <MenuItem onClick={handleLogout}>
+                            <ListItemIcon>
+                              <ExitToAppIcon />
+                            </ListItemIcon>
+                            Logout
+                          </MenuItem>
                         </MenuList>
                       </ClickAwayListener>
                     </Paper>
@@ -241,44 +270,7 @@ function Navbar({ handleDrawerToggle, dataSpeciality, userData, setUserData }) {
           p: 2,
         }}
       >
-        <div className={styles.dropdown}>
-          <Autocomplete
-            disablePortal
-            id="combo-box-demo"
-            options={specialityNames}
-            onChange={handleAutocompleteChange}
-            value={selectedValue.autocomplete}
-            sx={{
-              "& .MuiOutlinedInput-root": {
-                border: "none",
-              },
-              "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-                border: "none",
-              },
-            }}
-            forcePopupIcon={false}
-            renderInput={(params) => (
-              <TextField {...params} placeholder="Select a Service" />
-            )}
-          />
-        </div>
-        <div className={styles.searchBar}>
-          <TextField
-            id="search"
-            placeholder="Search Doctors"
-            fullWidth
-            variant="outlined"
-            onChange={handleChange}
-            sx={{
-              "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-                border: "none",
-              },
-            }}
-          />
-          <IconButton onClick={handleSearch} aria-label="search">
-            <SearchIcon fontSize="medium" />
-          </IconButton>
-        </div>
+        {searchBarAndDropdown}
       </Box>
       <Box>
         <Swiper />
