@@ -1,7 +1,5 @@
 import * as React from "react";
-
 import Box from "@mui/material/Box";
-
 import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
@@ -15,6 +13,7 @@ import IconButton from "@mui/material/IconButton";
 import { styled } from "@mui/material/styles";
 import { Link, useLocation } from "react-router-dom";
 import EventNoteIcon from "@mui/icons-material/EventNote";
+import NestedDrawer from "./NestedDrawer";
 
 const drawerWidth = 240;
 const DrawerHeader = styled("div")(({ theme }) => ({
@@ -29,11 +28,9 @@ const DrawerHeader = styled("div")(({ theme }) => ({
 function ResponsiveDrawer(props) {
   const location = useLocation();
   const [selectedItem, setSelectedItem] = React.useState(null);
-  let userData = JSON.parse(localStorage.getItem("userContext") || "null");
+  const [isNestedDrawerOpen, setIsNestedDrawerOpen] = React.useState(false);
 
-  const handleItemClick = (index) => {
-    setSelectedItem(index);
-  };
+  let userData = JSON.parse(localStorage.getItem("userContext") || "null");
 
   const menuItems = [
     { text: "Doctors", icon: <PersonSharpIcon />, link: "/" },
@@ -54,7 +51,15 @@ function ResponsiveDrawer(props) {
     },
   ];
 
-  console.log(userData);
+  const handleItemClick = (index) => {
+    setSelectedItem(index);
+    if (menuItems[index]?.text === "Account Settings") {
+      setIsNestedDrawerOpen((prevState) => !prevState);
+    } else {
+      setIsNestedDrawerOpen(false);
+    }
+  };
+
   const drawer = (
     <Box sx={{ marginTop: { md: 17 } }}>
       <DrawerHeader sx={{ display: { md: "none" } }}>
@@ -74,31 +79,53 @@ function ResponsiveDrawer(props) {
             return true; // Show other items unconditionally
           })
           .map((item, index) => (
-            <ListItem
-              key={index}
-              component={Link}
-              to={item.link}
-              sx={{
-                textDecoration: "none",
-                color: "inherit",
-              }}
-              disablePadding
-              onClick={() => handleItemClick(index)}
-            >
-              <ListItemButton
-                component={ListItemButton}
-                selected={selectedItem === index}
-                sx={{
-                  backgroundColor:
-                    selectedItem === index
-                      ? "#eeeeee !important"
-                      : "transparent",
-                }}
-              >
-                <ListItemIcon>{item.icon}</ListItemIcon>
-                <ListItemText primary={item.text} />
-              </ListItemButton>
-            </ListItem>
+            <>
+              {item.text !== "Account Settings" ? (
+                <ListItem
+                  key={index}
+                  component={Link}
+                  to={item.link}
+                  sx={{
+                    textDecoration: "none",
+                    color: "inherit",
+                  }}
+                  disablePadding
+                  onClick={() => handleItemClick(index)}
+                >
+                  <ListItemButton
+                    selected={selectedItem === index}
+                    sx={{
+                      backgroundColor:
+                        selectedItem === index
+                          ? "#eeeeee !important"
+                          : "transparent",
+                    }}
+                  >
+                    <ListItemIcon>{item.icon}</ListItemIcon>
+                    <ListItemText primary={item.text} />
+                  </ListItemButton>
+                </ListItem>
+              ) : (
+                <>
+                  <ListItem
+                    component={Link}
+                    to={item.link}
+                    sx={{
+                      textDecoration: "none",
+                      color: "inherit",
+                    }}
+                    disablePadding
+                    onClick={() => handleItemClick(index)}
+                  >
+                    <ListItemButton>
+                      <ListItemIcon>{item.icon}</ListItemIcon>
+                      <ListItemText primary={item.text} />
+                    </ListItemButton>
+                  </ListItem>
+                  {isNestedDrawerOpen && <NestedDrawer />}
+                </>
+              )}
+            </>
           ))}
       </List>
     </Box>

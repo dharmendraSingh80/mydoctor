@@ -4,15 +4,23 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Paper from "@mui/material/Paper";
+import patientAppointment from "../api";
 
 export default function Appointments({ mobileOpen, handleDrawerToggle }) {
+  const [totalAppointments, setTotalAppointments] = useState("");
   const [record, setRecord] = useState(10);
 
   const handleChange = (event) => {
     setRecord(event.target.value);
   };
+
+  useEffect(() => {
+    patientAppointment().then((data) => {
+      setTotalAppointments(data);
+    });
+  }, []);
 
   return (
     <Box sx={{ display: "flex" }}>

@@ -1,3 +1,4 @@
+let userData = JSON.parse(localStorage.getItem("userContext") || "null");
 export async function getSpecialities() {
   let data = await fetch(
     `${process.env.REACT_APP_BASE_URL}/specializations?$limit=100&$sort[name]=1`
@@ -114,6 +115,19 @@ export async function userLogin(data) {
         },
         body: JSON.stringify({ ...data, strategy: "local" }),
       }
+    );
+    const responseData = await response.json();
+    return responseData;
+  } catch (error) {
+    console.error("Error:", error);
+    throw error;
+  }
+}
+
+export default async function patientAppointment() {
+  try {
+    let response = await fetch(
+      `${process.env.REACT_APP_BASE_URL}/appointments?patientId=${userData.user._id}`
     );
     const responseData = await response.json();
     return responseData;
