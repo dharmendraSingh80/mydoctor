@@ -11,49 +11,59 @@ export default function Doctor({ mobileOpen, handleDrawerToggle }) {
     doctorDetails: "",
     slots: [],
   });
+  const [isLoading, setIsLoading] = useState(true);
+
   const { id } = useParams();
 
   useEffect(() => {
-    Promise.all([getDoctorDetails(id), getNumbersOfSlots(id)]).then(
-      ([doctorData, slotData]) => {
+    Promise.all([getDoctorDetails(id), getNumbersOfSlots(id)])
+      .then(([doctorData, slotData]) => {
         setDoctor((prev) => ({
           ...prev,
           doctorDetails: doctorData,
           slots: slotData.data,
         }));
-      }
-    );
+      })
+      .finally(() => {
+        setIsLoading(false); // Set loading to false when data is fetched
+      });
   }, [id]);
 
   return (
-    <Box sx={{ display: "flex" }}>
+    <Box sx={{ display: "flex", minHeight: "68vh" }}>
       <ResponsiveDrawer
         mobileOpen={mobileOpen}
         handleDrawerToggle={handleDrawerToggle}
       />
       <Box sx={styles.wrapper}>
         <Box sx={styles.doctorContainer}>
-          <Box sx={styles.details}>
-            <Box sx={styles.docCard}>
-              <DoctorDetailsCard content={doctor.doctorDetails} />
+          {isLoading ? (
+            <Typography variant="body1" color="text.secondary">
+              Loading doctors details...
+            </Typography>
+          ) : (
+            <Box sx={styles.details}>
+              <Box sx={styles.docCard}>
+                <DoctorDetailsCard content={doctor.doctorDetails} />
+              </Box>
+              <Box sx={styles.docCard}>
+                <Typography>
+                  {doctor?.slots.length === 0 ? (
+                    "No slots available"
+                  ) : (
+                    <ul>
+                      {doctor?.slots.map((slot) => (
+                        <li key={slot._id}>{slot.startTime}</li>
+                      ))}
+                    </ul>
+                  )}
+                </Typography>
+              </Box>
+              <Box sx={styles.accordianDoc}>
+                <AccordionDoctor content={doctor.doctorDetails} />
+              </Box>
             </Box>
-            <Box sx={styles.docCard}>
-              <Typography>
-                {doctor?.slots.length === 0 ? (
-                  "No slots available"
-                ) : (
-                  <ul>
-                    {doctor?.slots.map((slot) => (
-                      <li key={slot._id}>{slot.startTime}</li>
-                    ))}
-                  </ul>
-                )}
-              </Typography>
-            </Box>
-            <Box sx={styles.accordianDoc}>
-              <AccordionDoctor content={doctor.doctorDetails} />
-            </Box>
-          </Box>
+          )}
         </Box>
       </Box>
     </Box>

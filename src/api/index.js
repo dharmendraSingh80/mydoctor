@@ -127,7 +127,13 @@ export async function userLogin(data) {
 export default async function patientAppointment() {
   try {
     let response = await fetch(
-      `${process.env.REACT_APP_BASE_URL}/appointments?patientId=${userData.user._id}`
+      `${process.env.REACT_APP_BASE_URL}/appointments?patientId=${userData.user._id}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${userData.accessToken}`,
+        },
+      }
     );
     const responseData = await response.json();
     return responseData;

@@ -7,19 +7,33 @@ import Select from "@mui/material/Select";
 import { useEffect, useState } from "react";
 import Paper from "@mui/material/Paper";
 import patientAppointment from "../api";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemAvatar from "@mui/material/ListItemAvatar";
+import ListItemText from "@mui/material/ListItemText";
+import Avatar from "@mui/material/Avatar";
+import IconButton from "@mui/material/IconButton";
+import FolderIcon from "@mui/icons-material/Folder";
+import DeleteIcon from "@mui/icons-material/Delete";
+import "../styles/loader.css";
 
 export default function Appointments({ mobileOpen, handleDrawerToggle }) {
-  const [totalAppointments, setTotalAppointments] = useState("");
+  const [totalAppointments, setTotalAppointments] = useState([]);
   const [record, setRecord] = useState(10);
+  const [loading, setLoading] = useState(true);
 
   const handleChange = (event) => {
     setRecord(event.target.value);
   };
 
   useEffect(() => {
-    patientAppointment().then((data) => {
-      setTotalAppointments(data);
-    });
+    patientAppointment()
+      .then((data) => {
+        setTotalAppointments(data.data);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   }, []);
 
   return (
@@ -81,18 +95,46 @@ export default function Appointments({ mobileOpen, handleDrawerToggle }) {
             </FormControl>
           </Box>
         </Box>
-        <Paper elevation={0}>
-          <Box
-            sx={{
-              color: "#9e9e9e",
-              padding: "2rem 1rem",
-              fontSize: "1.3rem",
-              textAlign: "center",
-            }}
-          >
-            No appointments are made yet
-          </Box>
-        </Paper>
+        {loading ? (
+          <div className="loading-container">
+            <div className="loader"></div>
+          </div>
+        ) : (
+          <Paper elevation={0}>
+            {totalAppointments.length === 0 ? (
+              <Box
+                sx={{
+                  color: "#9e9e9e",
+                  padding: "2rem 1rem",
+                  fontSize: "1.3rem",
+                  textAlign: "center",
+                }}
+              >
+                No appointments are made yet
+              </Box>
+            ) : (
+              <List>
+                {totalAppointments.map((item, index) => (
+                  <ListItem
+                    key={index}
+                    secondaryAction={
+                      <IconButton edge="end" aria-label="delete">
+                        <DeleteIcon />
+                      </IconButton>
+                    }
+                  >
+                    <ListItemAvatar>
+                      <Avatar>
+                        <FolderIcon />
+                      </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText primary="Single-line item" />
+                  </ListItem>
+                ))}
+              </List>
+            )}
+          </Paper>
+        )}
       </Box>
     </Box>
   );

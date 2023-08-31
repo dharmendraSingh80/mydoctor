@@ -14,6 +14,7 @@ import {
   Box,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
+import "../styles/loader.css";
 
 const drawerWidth = 240;
 
@@ -22,6 +23,7 @@ export default function Specialities({ speciality, totalSpeciality }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(8);
   const [searchValue, setSearchValue] = useState("");
+  const [loading, setLoading] = useState(true);
 
   const [showSpecialities, setShowSpecialities] = useState(speciality);
 
@@ -41,6 +43,11 @@ export default function Specialities({ speciality, totalSpeciality }) {
   const displayedSpecialities = showSpecialities.slice(startIndex, endIndex);
   useEffect(() => {
     setShowSpecialities(speciality);
+    const timeout = setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+
+    return () => clearTimeout(timeout);
   }, [speciality]);
 
   const handleSearch = () => {
@@ -63,118 +70,124 @@ export default function Specialities({ speciality, totalSpeciality }) {
         width: { md: `calc(100% - ${drawerWidth}px)` },
       }}
     >
-      <section>
-        <Box
-          sx={{
-            display: "flex",
-            flexFlow: "row wrap",
-            alignItems: "center",
-            mb: "1rem",
-          }}
-        >
-          <Typography
-            variant="h2"
+      {loading ? (
+        <div className="loading-container">
+          <div className="loader"></div>
+        </div>
+      ) : (
+        <section>
+          <Box
             sx={{
-              color: "#3f51b5",
-              fontSize: { xs: "26px", md: "30px", lg: "36px" },
-              fontWeight: "bold",
-              flexGrow: 1,
+              display: "flex",
+              flexFlow: "row wrap",
+              alignItems: "center",
+              mb: "1rem",
             }}
           >
-            {showSpecialities.length > 10
-              ? Math.floor(showSpecialities.length / 10) * 10
-              : showSpecialities.length}
-            + Specialities
-          </Typography>
+            <Typography
+              variant="h2"
+              sx={{
+                color: "#3f51b5",
+                fontSize: { xs: "26px", md: "30px", lg: "36px" },
+                fontWeight: "bold",
+                flexGrow: 1,
+              }}
+            >
+              {showSpecialities.length > 10
+                ? Math.floor(showSpecialities.length / 10) * 10
+                : showSpecialities.length}
+              + Specialities
+            </Typography>
+            <Box
+              sx={{
+                display: "grid",
+                gridGap: "0.5rem",
+                gridTemplateRows: "1fr",
+                gridTemplateColumns: "1fr auto",
+              }}
+            >
+              <FormControl>
+                <TextField
+                  placeholder="Search a Speciality"
+                  variant="outlined"
+                  margin="dense"
+                  value={searchValue}
+                  size="small"
+                  onChange={(event) => setSearchValue(event.target.value)}
+                  aria-invalid="false"
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="search specialities"
+                          onClick={handleSearch}
+                        >
+                          <SearchIcon />
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </FormControl>
+              <FormControl variant="outlined" margin="dense">
+                <Select
+                  inputProps={{
+                    name: "option",
+                    id: "select-option",
+                  }}
+                  value={itemsPerPage}
+                  onChange={(event) => setItemsPerPage(event.target.value)}
+                  size="small"
+                >
+                  <MenuItem value={8}>8</MenuItem>
+                  <MenuItem value={12}>12</MenuItem>
+                  <MenuItem value={16}>16</MenuItem>
+                  <MenuItem value={20}>20</MenuItem>
+                  <MenuItem value={40}>40</MenuItem>
+                </Select>
+              </FormControl>
+            </Box>
+          </Box>
           <Box
             sx={{
               display: "grid",
-              gridGap: "0.5rem",
-              gridTemplateRows: "1fr",
-              gridTemplateColumns: "1fr auto",
+              gridTemplateColumns: {
+                xs: "1fr",
+                sm: "1fr 1fr",
+                lg: "1fr 1fr 1fr",
+              },
+              gap: "20px",
             }}
           >
-            <FormControl>
-              <TextField
-                placeholder="Search a Speciality"
-                variant="outlined"
-                margin="dense"
-                value={searchValue}
-                size="small"
-                onChange={(event) => setSearchValue(event.target.value)}
-                aria-invalid="false"
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        aria-label="search specialities"
-                        onClick={handleSearch}
-                      >
-                        <SearchIcon />
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            </FormControl>
-            <FormControl variant="outlined" margin="dense">
-              <Select
-                inputProps={{
-                  name: "option",
-                  id: "select-option",
-                }}
-                value={itemsPerPage}
-                onChange={(event) => setItemsPerPage(event.target.value)}
-                size="small"
-              >
-                <MenuItem value={8}>8</MenuItem>
-                <MenuItem value={12}>12</MenuItem>
-                <MenuItem value={16}>16</MenuItem>
-                <MenuItem value={20}>20</MenuItem>
-                <MenuItem value={40}>40</MenuItem>
-              </Select>
-            </FormControl>
+            {displayedSpecialities.map((item, index) => (
+              <SpecialitiesCard key={index} content={item} />
+            ))}
           </Box>
-        </Box>
-        <Box
-          sx={{
-            display: "grid",
-            gridTemplateColumns: {
-              xs: "1fr",
-              sm: "1fr 1fr",
-              lg: "1fr 1fr 1fr",
-            },
-            gap: "20px",
-          }}
-        >
-          {displayedSpecialities.map((item, index) => (
-            <SpecialitiesCard key={index} content={item} />
-          ))}
-        </Box>
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            mt: "16px",
-          }}
-        >
-          {showSpecialities.length === 0 ? (
-            <Typography variant="h6" color="text.secondary">
-              No specialities found{" "}
-            </Typography>
-          ) : (
-            <Stack spacing={2}>
-              <Pagination
-                count={totalPages}
-                page={currentPage}
-                onChange={handlePageChange}
-                variant="outlined"
-                color="primary"
-              />
-            </Stack>
-          )}
-        </Box>
-      </section>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              mt: "16px",
+            }}
+          >
+            {showSpecialities.length === 0 ? (
+              <Typography variant="h6" color="text.secondary">
+                No specialities found{" "}
+              </Typography>
+            ) : (
+              <Stack spacing={2}>
+                <Pagination
+                  count={totalPages}
+                  page={currentPage}
+                  onChange={handlePageChange}
+                  variant="outlined"
+                  color="primary"
+                />
+              </Stack>
+            )}
+          </Box>
+        </section>
+      )}
     </Box>
   );
 }

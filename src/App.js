@@ -32,7 +32,7 @@ function App() {
   };
 
   const doctors = (
-    <Box sx={{ display: "flex" }}>
+    <Box sx={{ display: "flex", minHeight: "68vh" }}>
       <ResponsiveDrawer
         mobileOpen={mobileOpen}
         handleDrawerToggle={handleDrawerToggle}
