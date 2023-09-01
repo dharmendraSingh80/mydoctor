@@ -51,15 +51,6 @@ function ResponsiveDrawer(props) {
     },
   ];
 
-  const handleItemClick = (index) => {
-    setSelectedItem(index);
-    if (menuItems[index]?.text === "Account Settings") {
-      setIsNestedDrawerOpen((prevState) => !prevState);
-    } else {
-      setIsNestedDrawerOpen(false);
-    }
-  };
-
   const drawer = (
     <Box sx={{ marginTop: { md: 17 } }}>
       <DrawerHeader sx={{ display: { md: "none" } }}>
@@ -90,7 +81,6 @@ function ResponsiveDrawer(props) {
                     color: "inherit",
                   }}
                   disablePadding
-                  onClick={() => handleItemClick(index)}
                 >
                   <ListItemButton
                     selected={selectedItem === index}
@@ -115,7 +105,6 @@ function ResponsiveDrawer(props) {
                       color: "inherit",
                     }}
                     disablePadding
-                    onClick={() => handleItemClick(index)}
                   >
                     <ListItemButton>
                       <ListItemIcon>{item.icon}</ListItemIcon>
@@ -130,14 +119,17 @@ function ResponsiveDrawer(props) {
       </List>
     </Box>
   );
+
   React.useEffect(() => {
     // Find the index of the current pathname in the menu items
     const currentIndex = menuItems.findIndex(
       (item) => item.link === location.pathname
     );
-
     // Update the selected item index
     setSelectedItem(currentIndex);
+    if (location.pathname === "/myprofile") {
+      setIsNestedDrawerOpen(true);
+    }
   }, [location]);
   return (
     <Box

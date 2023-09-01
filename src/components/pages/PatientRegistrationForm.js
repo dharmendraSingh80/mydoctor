@@ -284,6 +284,7 @@ const RegistrationForm = () => {
       .toString()
       .padStart(2, "0");
     const currentDay = currentDate.getDate().toString().padStart(2, "0");
+    console.log(currentDay);
 
     setFormData((prevData) => ({
       ...prevData,
