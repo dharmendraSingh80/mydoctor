@@ -230,9 +230,10 @@ const RegistrationForm = () => {
       }
     }
     setInputErrors(newInputErrors);
-
+    const userName = formData.fullName.split(" ");
     const userDetails = {
-      firstName: formData.fullName,
+      firstName: userName[0],
+      lastName: userName[1],
       gender: formData.gender,
       email: formData.email,
       password: formData.password,

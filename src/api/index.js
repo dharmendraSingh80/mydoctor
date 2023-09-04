@@ -183,3 +183,33 @@ export async function getPatientImage() {
   response = await response.json();
   return response;
 }
+
+export async function getPatient() {
+  let response = await fetch(
+    `${process.env.REACT_APP_BASE_URL}/patients/${userData.user._id}`,
+    {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${userData.accessToken}`,
+      },
+    }
+  );
+  response = await response.json();
+  return response;
+}
+
+export async function updatePatientData(data) {
+  let response = await fetch(
+    `${process.env.REACT_APP_BASE_URL}/patients/${userData.user._id}`,
+    {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${userData.accessToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    }
+  );
+  response = await response.json();
+  return response;
+}
