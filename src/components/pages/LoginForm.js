@@ -24,7 +24,13 @@ function LoginForm() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const response = await userLogin(formData);
+    const loginDetails = { password: formData.password };
+    if (!isNaN(+formData.email)) {
+      loginDetails.contactNumber = formData.email;
+    } else {
+      loginDetails.email = formData.email;
+    }
+    const response = await userLogin(loginDetails);
     if (response.user) {
       localStorage.setItem("userContext", JSON.stringify(response));
       navigate("/");

@@ -125,12 +125,15 @@ function ResponsiveDrawer(props) {
     const currentIndex = menuItems.findIndex(
       (item) => item.link === location.pathname
     );
-    // Update the selected item index
+    // Check if the current pathname matches "/myprofile" or "/changepassword"
+    const isProfileOrChangePassword =
+      location.pathname === "/myprofile" ||
+      location.pathname === "/changepassword";
+    // Update the selected item index and isNestedDrawerOpen
     setSelectedItem(currentIndex);
-    if (location.pathname === "/myprofile") {
-      setIsNestedDrawerOpen(true);
-    }
-  }, [location]);
+    setIsNestedDrawerOpen(isProfileOrChangePassword);
+  }, [location, menuItems]);
+
   return (
     <Box
       component="nav"

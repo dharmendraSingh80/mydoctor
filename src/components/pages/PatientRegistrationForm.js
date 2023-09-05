@@ -239,7 +239,10 @@ const RegistrationForm = () => {
       password: formData.password,
       contactNumber: formData.contactNumber,
       profile: {
-        dob: `${formData.year}-${formData.month}-${formData.day}`,
+        dob: `${formData.year}-${formData.month}-${formData.day.padStart(
+          2,
+          "0"
+        )}`,
       },
     };
     const response = await signUpPatient(userDetails);
@@ -284,8 +287,7 @@ const RegistrationForm = () => {
     const currentMonth = (currentDate.getMonth() + 1)
       .toString()
       .padStart(2, "0");
-    const currentDay = currentDate.getDate().toString().padStart(2, "0");
-    console.log(currentDay);
+    const currentDay = currentDate.getDate().toString();
 
     setFormData((prevData) => ({
       ...prevData,

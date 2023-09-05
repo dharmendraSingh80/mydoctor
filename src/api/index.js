@@ -106,6 +106,10 @@ export async function signUpDoctor(data) {
 
 export async function userLogin(data) {
   try {
+    let strategy = "local";
+    if (data.contactNumber) {
+      strategy = "local-mobile";
+    }
     let response = await fetch(
       `${process.env.REACT_APP_BASE_URL}/authentication`,
       {
@@ -113,7 +117,7 @@ export async function userLogin(data) {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ ...data, strategy: "local" }),
+        body: JSON.stringify({ ...data, strategy: strategy }),
       }
     );
     const responseData = await response.json();

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import myIcon from "../myIcon/logo.svg";
 import { useLocation } from "react-router-dom";
 import styles from "../styles/navbar.module.css";
@@ -8,14 +8,10 @@ import Autocomplete from "@mui/material/Autocomplete";
 import {
   Box,
   IconButton,
-  ClickAwayListener,
-  Grow,
-  Paper,
-  Popper,
   MenuItem,
-  MenuList,
   Avatar,
-  ListItemIcon,
+  Menu,
+  Typography,
 } from "@mui/material";
 // import MenuItem from "@mui/material/MenuItem";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -31,8 +27,9 @@ function Navbar({ handleDrawerToggle, dataSpeciality }) {
     autocomplete: "",
     typeSearch: "",
   });
-  const [open, setOpen] = useState(false);
-  const anchorRef = useRef(null);
+
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -41,7 +38,6 @@ function Navbar({ handleDrawerToggle, dataSpeciality }) {
   const specialityNames = dataSpeciality.map((item) => item.name);
   // Retrieving user data
   let userData = JSON.parse(localStorage.getItem("userContext") || "null");
-  const prevOpen = useRef(open);
 
   const handleAutocompleteChange = (event, value) => {
     setSelectedValue((prev) => {
@@ -74,30 +70,15 @@ function Navbar({ handleDrawerToggle, dataSpeciality }) {
     navigate(url);
   };
 
-  const handleToggle = () => {
-    setOpen((prevOpen) => !prevOpen);
-  };
-
-  const handleClose = (event) => {
-    if (anchorRef.current && anchorRef.current.contains(event.target)) {
-      return;
-    }
-    setOpen(false);
-  };
-
   const handleLogout = () => {
     localStorage.removeItem("userContext");
-    setOpen(false);
+    setAnchorEl(null);
+    navigate("/auth/login");
   };
 
-  function handleListKeyDown(event) {
-    if (event.key === "Tab") {
-      event.preventDefault();
-      setOpen(false);
-    } else if (event.key === "Escape") {
-      setOpen(false);
-    }
-  }
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
 
   const searchBarAndDropdown = (
     <>
@@ -141,15 +122,6 @@ function Navbar({ handleDrawerToggle, dataSpeciality }) {
       </div>
     </>
   );
-
-  // return focus to the button when we transitioned from !open -> open
-
-  useEffect(() => {
-    if (prevOpen.current && !open && anchorRef.current) {
-      anchorRef.current.focus();
-    }
-    prevOpen.current = open;
-  }, [open]);
 
   useEffect(() => {
     setSelectedValue((prev) => {
@@ -205,60 +177,53 @@ function Navbar({ handleDrawerToggle, dataSpeciality }) {
             </Button>
           ) : (
             <div>
-              <Box sx={{ mr: 1 }} ref={anchorRef} onClick={handleToggle}>
-                <Avatar src="/broken-image.jpg" />
-              </Box>
-              <Popper
-                open={open}
-                anchorEl={anchorRef.current}
-                role={undefined}
-                placement="bottom-start"
-                transition
-                disablePortal
-                sx={{ zIndex: 1222 }}
+              <IconButton
+                id="demo-positioned-button"
+                aria-controls={open ? "demo-positioned-menu" : undefined}
+                aria-haspopup="true"
+                aria-expanded={open ? "true" : undefined}
+                onClick={handleClick}
               >
-                {({ TransitionProps, placement }) => (
-                  <Grow
-                    {...TransitionProps}
-                    style={{
-                      transformOrigin:
-                        placement === "bottom-start"
-                          ? "left top"
-                          : "left bottom",
-                    }}
-                  >
-                    <Paper>
-                      <ClickAwayListener onClickAway={handleClose}>
-                        <MenuList
-                          autoFocusItem={open}
-                          id="composition-menu"
-                          aria-labelledby="composition-button"
-                          onKeyDown={handleListKeyDown}
-                        >
-                          <MenuItem onClick={handleClose}>
-                            <ListItemIcon>
-                              <PermIdentityIcon />
-                            </ListItemIcon>
-                            Account Settings
-                          </MenuItem>
-                          <MenuItem onClick={handleClose}>
-                            <ListItemIcon>
-                              <CalendarTodayIcon />
-                            </ListItemIcon>
-                            My Appointments
-                          </MenuItem>
-                          <MenuItem onClick={handleLogout}>
-                            <ListItemIcon>
-                              <ExitToAppIcon />
-                            </ListItemIcon>
-                            Logout
-                          </MenuItem>
-                        </MenuList>
-                      </ClickAwayListener>
-                    </Paper>
-                  </Grow>
-                )}
-              </Popper>
+                <Avatar src="/broken-image.jpg" />
+              </IconButton>
+              <Menu
+                id="demo-positioned-menu"
+                aria-labelledby="demo-positioned-button"
+                anchorEl={anchorEl}
+                open={open}
+                onClose={() => setAnchorEl(null)}
+                anchorOrigin={{
+                  vertical: "top",
+                  horizontal: "left",
+                }}
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "left",
+                }}
+              >
+                <MenuItem
+                  onClick={() => {
+                    navigate("/myprofile");
+                    setAnchorEl(null);
+                  }}
+                >
+                  <PermIdentityIcon sx={{ pr: 1 }} />
+                  <Typography>Account Settings</Typography>
+                </MenuItem>
+                <MenuItem
+                  onClick={() => {
+                    navigate("/appointments");
+                    setAnchorEl(null);
+                  }}
+                >
+                  <CalendarTodayIcon sx={{ pr: 1 }} />
+                  <Typography>My Appointments</Typography>
+                </MenuItem>
+                <MenuItem onClick={handleLogout}>
+                  <ExitToAppIcon sx={{ pr: 1 }} />
+                  <Typography>Logout</Typography>
+                </MenuItem>
+              </Menu>
             </div>
           )}
         </div>

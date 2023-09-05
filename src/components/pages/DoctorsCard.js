@@ -6,6 +6,9 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { useEffect } from "react";
+import { getNumbersOfSlots } from "../../api";
 
 const card = (content) => {
   const qualifications =
@@ -89,11 +92,66 @@ const card = (content) => {
 };
 
 export default function OutlinedCard({ content }) {
+  const [numSlots, setNumSlots] = useState([]);
+  const [nextAvailableDay, setNextAvailableDay] = useState(null);
+
   const navigate = useNavigate();
   const handleBookAppointment = () => {
     const id = content._id;
     navigate(`/doctor/${id}`);
   };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      // Wait for the first useEffect to fetch data and setNumSlots
+      await getNumbersOfSlots(content._id).then((data) => {
+        setNumSlots(data.data);
+      });
+
+      // Once numSlots is set, you can proceed with your logic
+      const currentDateTime = new Date();
+      const millisecondsInADay = 24 * 60 * 60 * 1000;
+      const tomorrowDateTime = new Date(
+        currentDateTime.getTime() + millisecondsInADay
+      );
+
+      let nextAvailableDay = "";
+
+      for (const appointment of numSlots) {
+        const startTime = new Date(appointment.startTime);
+
+        if (startTime < currentDateTime) {
+          continue;
+        }
+
+        if (startTime <= tomorrowDateTime) {
+          nextAvailableDay = "Tomorrow";
+          break;
+        } else if (
+          startTime <=
+          new Date(currentDateTime.getTime() + 7 * millisecondsInADay)
+        ) {
+          const dayNames = [
+            "Sunday",
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday",
+          ];
+          const dayIndex = startTime.getDay();
+          nextAvailableDay = dayNames[dayIndex];
+          break;
+        }
+      }
+
+      setNextAvailableDay(nextAvailableDay);
+    };
+
+    fetchData(); // Call the async function
+  }, [content._id]);
+
   return (
     <Box sx={{ minWidth: 275 }}>
       <Card variant="outlined" onClick={handleBookAppointment} sx={styles.card}>

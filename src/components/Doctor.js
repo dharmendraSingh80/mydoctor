@@ -74,7 +74,7 @@ const styles = {
   doctorContainer: {
     width: "100%",
     display: "flex",
-    // maxWidth: "1300px",
+    maxWidth: "1300px",
     // marginTop: "30px",
     alignItems: "flex-start",
     flexDirection: "column",

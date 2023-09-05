@@ -14,6 +14,7 @@ import DoctorsBySpeciality from "./components/DoctorsBySpeciality";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Appointments from "./components/Appointments";
 import PatientProfile from "./components/PatientProfile";
+import ChangePassword from "./components/ChangePassword";
 
 function App() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -121,6 +122,17 @@ function App() {
               element={
                 <ProtectedRoute userData={{ userData }}>
                   <PatientProfile
+                    mobileOpen={mobileOpen}
+                    handleDrawerToggle={handleDrawerToggle}
+                  />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/changepassword"
+              element={
+                <ProtectedRoute userData={{ userData }}>
+                  <ChangePassword
                     mobileOpen={mobileOpen}
                     handleDrawerToggle={handleDrawerToggle}
                   />
