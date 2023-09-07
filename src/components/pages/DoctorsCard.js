@@ -10,7 +10,7 @@ import { useState } from "react";
 import { useEffect } from "react";
 import { getNumbersOfSlots } from "../../api";
 
-const card = (content) => {
+const card = (content, nextAvailableDay) => {
   const qualifications =
     content.profile?.qualifications && content.profile.qualifications.length > 0
       ? content.profile.qualifications
@@ -80,8 +80,8 @@ const card = (content) => {
               </Typography>
 
               <Typography sx={styles.field}>Next available</Typography>
-              <Typography color="text.secondary" sx={styles.field}>
-                Not available
+              <Typography sx={{ color: "#4caf50", fontSize: "13px" }}>
+                {nextAvailableDay ? nextAvailableDay : "..."}
               </Typography>
             </Box>
           </Box>
@@ -111,6 +111,7 @@ export default function OutlinedCard({ content }) {
       // Once numSlots is set, you can proceed with your logic
       const currentDateTime = new Date();
       const millisecondsInADay = 24 * 60 * 60 * 1000;
+      const millisecondsInAWeek = 7 * millisecondsInADay;
       const tomorrowDateTime = new Date(
         currentDateTime.getTime() + millisecondsInADay
       );
@@ -124,12 +125,18 @@ export default function OutlinedCard({ content }) {
           continue;
         }
 
-        if (startTime <= tomorrowDateTime) {
+        if (
+          startTime.getFullYear() === tomorrowDateTime.getFullYear() &&
+          startTime.getMonth() === tomorrowDateTime.getMonth() &&
+          startTime.getDate() === tomorrowDateTime.getDate()
+        ) {
           nextAvailableDay = "Tomorrow";
           break;
+        } else if (startTime < tomorrowDateTime) {
+          nextAvailableDay = "Today";
+          break;
         } else if (
-          startTime <=
-          new Date(currentDateTime.getTime() + 7 * millisecondsInADay)
+          startTime <= new Date(currentDateTime.getTime() + millisecondsInAWeek)
         ) {
           const dayNames = [
             "Sunday",
@@ -143,19 +150,23 @@ export default function OutlinedCard({ content }) {
           const dayIndex = startTime.getDay();
           nextAvailableDay = dayNames[dayIndex];
           break;
+        } else {
+          nextAvailableDay = "Next Week";
+          break;
         }
       }
 
+      // Set the next available day
       setNextAvailableDay(nextAvailableDay);
     };
 
     fetchData(); // Call the async function
-  }, [content._id]);
+  }, [content._id, nextAvailableDay]);
 
   return (
     <Box sx={{ minWidth: 275 }}>
       <Card variant="outlined" onClick={handleBookAppointment} sx={styles.card}>
-        {card(content)}
+        {card(content, nextAvailableDay)}
         <Box sx={styles.buttonStyle}>
           <Button
             size="small"

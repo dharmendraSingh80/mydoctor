@@ -5,6 +5,7 @@ import AccordionDoctor from "./pages/AccordianDoctor";
 import { useEffect, useState } from "react";
 import { getDoctorDetails, getNumbersOfSlots } from "../api";
 import ResponsiveDrawer from "./pages/SideBar";
+import AppointmentTab from "./pages/AppointmentTab";
 
 export default function Doctor({ mobileOpen, handleDrawerToggle }) {
   const [doctor, setDoctor] = useState({
@@ -51,11 +52,12 @@ export default function Doctor({ mobileOpen, handleDrawerToggle }) {
                   {doctor?.slots.length === 0 ? (
                     "No slots available"
                   ) : (
-                    <ul>
-                      {doctor?.slots.map((slot) => (
-                        <li key={slot._id}>{slot.startTime}</li>
-                      ))}
-                    </ul>
+                    // <ul>
+                    //   {doctor?.slots.map((slot) => (
+                    //     <li key={slot._id}>{slot.startTime}</li>
+                    //   ))}
+                    // </ul>
+                    <AppointmentTab />
                   )}
                 </Typography>
               </Box>
