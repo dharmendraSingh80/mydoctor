@@ -49,15 +49,10 @@ export default function Doctor({ mobileOpen, handleDrawerToggle }) {
               </Box>
               <Box sx={styles.docCard}>
                 <Typography>
-                  {doctor?.slots.length === 0 ? (
+                  {doctor.slots.length === 0 ? (
                     "No slots available"
                   ) : (
-                    // <ul>
-                    //   {doctor?.slots.map((slot) => (
-                    //     <li key={slot._id}>{slot.startTime}</li>
-                    //   ))}
-                    // </ul>
-                    <AppointmentTab />
+                    <AppointmentTab slots={doctor.slots} />
                   )}
                 </Typography>
               </Box>
@@ -76,7 +71,7 @@ const styles = {
   doctorContainer: {
     width: "100%",
     display: "flex",
-    maxWidth: "1300px",
+    maxWidth: "100%",
     // marginTop: "30px",
     alignItems: "flex-start",
     flexDirection: "column",

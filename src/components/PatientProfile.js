@@ -51,13 +51,13 @@ export default function PatientProfile({ mobileOpen, handleDrawerToggle }) {
             dob: patient.profile?.dob
               ? dayjs(patient.profile.dob).format("YYYY-MM-DD")
               : "",
-            bloodType: patient.profile?.bloodType || "",
-            area: patient.profile?.address?.area || "",
-            city: patient.profile?.address?.city || "",
-            country: patient.profile?.address?.country || "",
-            locality: patient.profile?.address?.locality || "",
-            pincode: patient.profile?.address?.pincode || "",
-            state: patient.profile?.address?.state || "",
+            bloodType: patient.profile?.bloodType || "N/a",
+            area: patient.profile?.address?.area || "N/a",
+            city: patient.profile?.address?.city || "N/a",
+            country: patient.profile?.address?.country || "N/a",
+            locality: patient.profile?.address?.locality || "N/a",
+            pincode: patient.profile?.address?.pincode || "N/a",
+            state: patient.profile?.address?.state || "N/a",
           };
           // Set the default values into the state
           setEditData(defaultEditData);
