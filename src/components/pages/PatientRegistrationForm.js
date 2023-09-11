@@ -233,7 +233,6 @@ const RegistrationForm = () => {
     const userName = formData.fullName.split(" ");
     const userDetails = {
       firstName: userName[0],
-      lastName: userName[1],
       gender: formData.gender,
       email: formData.email,
       password: formData.password,
@@ -245,6 +244,9 @@ const RegistrationForm = () => {
         )}`,
       },
     };
+    if (userName[1]) {
+      userDetails.lastName = userName[1];
+    }
     const response = await signUpPatient(userDetails);
     if (response.enabled) {
       setAlert(<Alert severity="success">Signed up successfully!</Alert>);

@@ -12,7 +12,7 @@ import ShareIcon from "@mui/icons-material/Share";
 
 export default function DetailsCard({ content }) {
   return (
-    <Card sx={{ width: "100%" }}>
+    <Card sx={{ width: "100%", "> *": { m: "12px" } }}>
       <CardHeader
         avatar={
           <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
