@@ -1,4 +1,4 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Grid, Typography } from "@mui/material";
 import { useParams } from "react-router-dom";
 import DoctorDetailsCard from "./pages/DoctorDetailsCard";
 import AccordionDoctor from "./pages/AccordianDoctor";
@@ -7,7 +7,11 @@ import { getDoctorDetails, getNumbersOfSlots } from "../api";
 import ResponsiveDrawer from "./pages/SideBar";
 import AppointmentTab from "./pages/AppointmentTab";
 
-export default function Doctor({ mobileOpen, handleDrawerToggle }) {
+export default function Doctor({
+  mobileOpen,
+  handleDrawerToggle,
+  setAppointment,
+}) {
   const [doctor, setDoctor] = useState({
     doctorDetails: "",
     slots: [],
@@ -36,73 +40,44 @@ export default function Doctor({ mobileOpen, handleDrawerToggle }) {
         mobileOpen={mobileOpen}
         handleDrawerToggle={handleDrawerToggle}
       />
-      <Box sx={styles.wrapper}>
-        <Box sx={styles.doctorContainer}>
+      <Box sx={{ p: "32px", flexGrow: 1, backgroundColor: "#fafafa" }}>
+        <Box
+          sx={{
+            width: "100%",
+            display: "flex",
+            maxWidth: "1440px",
+            marginTop: "30px",
+            alignItems: "flex-start",
+            flexDirection: "column",
+            justifyContent: "center",
+          }}
+        >
           {isLoading ? (
             <Typography variant="body1" color="text.secondary">
-              Loading doctors details...
+              Loading doctor's details...
             </Typography>
           ) : (
-            <Box sx={styles.details}>
-              <Box sx={styles.docCard}>
+            <Grid container spacing={3}>
+              <Grid item xs={12} sm={6}>
                 <DoctorDetailsCard content={doctor.doctorDetails} />
-              </Box>
-              <Box sx={styles.docCard}>
-                <Typography>
-                  {doctor.slots.length === 0 ? (
-                    "No slots available"
-                  ) : (
-                    <AppointmentTab slots={doctor.slots} />
-                  )}
-                </Typography>
-              </Box>
-              <Box sx={styles.accordianDoc}>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                {doctor.slots.length === 0 ? (
+                  <Typography>No slots available</Typography>
+                ) : (
+                  <AppointmentTab
+                    setAppointment={setAppointment}
+                    slots={doctor.slots}
+                  />
+                )}
+              </Grid>
+              <Grid item xs={12}>
                 <AccordionDoctor content={doctor.doctorDetails} />
-              </Box>
-            </Box>
+              </Grid>
+            </Grid>
           )}
         </Box>
       </Box>
     </Box>
   );
 }
-
-const styles = {
-  doctorContainer: {
-    width: "100%",
-    display: "flex",
-    maxWidth: "100%",
-    // marginTop: "30px",
-    alignItems: "flex-start",
-    flexDirection: "column",
-    justifyContent: "center",
-  },
-  wrapper: {
-    padding: "40px",
-    flexGrow: 1,
-    backgroundColor: "#fafafa",
-  },
-  details: {
-    display: "flex",
-    flexWrap: "wrap",
-    boxSizing: "border-box",
-    width: "calc(100% + 24px)",
-    margin: "-12px",
-  },
-  docCard: {
-    padding: "12px",
-    flexGrow: 0,
-    maxWidth: "50%",
-    flexBasis: "50%",
-    margin: 0,
-    boxSizing: "border-box",
-  },
-  accordianDoc: {
-    padding: "12px",
-    flexGrow: 0,
-    maxWidth: "100%",
-    flexBasis: "100%",
-    margin: 0,
-    boxSizing: "border-box",
-  },
-};

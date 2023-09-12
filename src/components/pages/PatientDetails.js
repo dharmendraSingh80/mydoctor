@@ -6,7 +6,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-export default function PatientDetails() {
+export default function PatientDetails({ userData, appointment }) {
   return (
     <Box
       sx={{
@@ -61,8 +61,8 @@ export default function PatientDetails() {
         <br />
         <TextField
           id="outlined-required"
-          label="Required"
-          defaultValue="Hello World"
+          label="Patient Name"
+          defaultValue={`${userData?.user?.firstName} ${userData?.user?.lastName}`}
           sx={{ backgroundColor: "rgb(221, 221, 221)" }}
           fullWidth
           disabled
@@ -72,15 +72,17 @@ export default function PatientDetails() {
         <br />
         <TextField
           id="outlined-required"
-          label="Required"
-          defaultValue="Hello World"
+          label="Patient Mobile Number"
+          defaultValue={userData?.user.contactNumber}
           sx={{ backgroundColor: "rgb(221, 221, 221)" }}
           fullWidth
           disabled
         />
         <br />
         <br />
-        <Typography component="span">Fee : Rs 104</Typography>
+        <Typography component="span">
+          Fee : Rs {appointment?.doctor?.profile?.consultationFee}
+        </Typography>
         <br />
         <br />
       </Box>

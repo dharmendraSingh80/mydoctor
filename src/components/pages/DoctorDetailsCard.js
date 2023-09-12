@@ -21,8 +21,8 @@ export default function DetailsCard({ content }) {
         }
         title={`Dr.${content?.firstName} ${content?.lastName}`}
         subheader={
-          content?.experienceMonths
-            ? Math.floor(content?.experienceMonths / 12) +
+          content?.profile?.experienceMonths
+            ? Math.floor(content.profile.experienceMonths / 12) +
               " years of experience "
             : "No experience"
         }

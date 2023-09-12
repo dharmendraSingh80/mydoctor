@@ -9,9 +9,17 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import PatientDetails from "./pages/PatientDetails";
 import AppointmentDetails from "./pages/AppointmentDetails";
+import { useNavigate } from "react-router-dom";
+import PaymentDetails from "./pages/PaymentDetails";
 
-export default function BookAppointment({ mobileOpen, handleDrawerToggle }) {
+export default function BookAppointment({
+  mobileOpen,
+  handleDrawerToggle,
+  appointment,
+}) {
   const [activeStep, setActiveStep] = React.useState(0);
+  const navigate = useNavigate();
+  let userData = JSON.parse(localStorage.getItem("userContext") || "null");
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -62,15 +70,21 @@ export default function BookAppointment({ mobileOpen, handleDrawerToggle }) {
           {activeStep === 0 ? (
             <>
               <Typography variant="h4">Patient Details</Typography>
-              <PatientDetails />
+              <PatientDetails userData={userData} appointment={appointment} />
             </>
           ) : activeStep === 1 ? (
             <>
               <Typography variant="h4">Appointment Details</Typography>
-              <AppointmentDetails />
+              <AppointmentDetails
+                appointment={appointment}
+                userData={userData}
+              />
             </>
           ) : (
-            ""
+            <>
+              <Typography variant="h4">Payment Details</Typography>
+              <PaymentDetails />
+            </>
           )}
 
           <Box

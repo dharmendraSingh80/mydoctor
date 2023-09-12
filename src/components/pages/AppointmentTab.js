@@ -7,7 +7,7 @@ import { TabContext, TabPanel } from "@mui/lab";
 import { Button, Chip, Typography } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
 
-export default function AppointmentTab({ slots }) {
+export default function AppointmentTab({ slots, setAppointment }) {
   const [value, setValue] = React.useState(0);
   const [isOpen, setIsOpen] = React.useState(false);
 
@@ -49,8 +49,9 @@ export default function AppointmentTab({ slots }) {
     return `${formattedStartTime} - ${formattedEndTime}`;
   };
 
-  const handleSlots = () => {
+  const handleSlots = (slot) => {
     if (userData.user) {
+      setAppointment(slot);
       navigate("/book-appointment");
     }
     setIsOpen(true);
@@ -65,6 +66,7 @@ export default function AppointmentTab({ slots }) {
           width: "100%",
           bgcolor: "#f5f5f5",
           display: "flex",
+
           boxSizing: "border-box",
           flexShrink: 0,
           flexDirection: "column",
@@ -83,7 +85,6 @@ export default function AppointmentTab({ slots }) {
               fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
               maxWidth: "264px",
               minWidth: { xs: "72px", sm: "160px" },
-
               fontSize: "1rem",
             },
           }}
@@ -103,7 +104,7 @@ export default function AppointmentTab({ slots }) {
                   color="primary"
                   variant="outlined"
                   component={Button}
-                  onClick={handleSlots}
+                  onClick={() => handleSlots(item)}
                 />
               </TabPanel>
             </Paper>

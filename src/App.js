@@ -27,6 +27,9 @@ function App() {
     totalSpeciality: 0,
     totalDoctors: 0,
   });
+
+  const [appointment, setAppointment] = useState("");
+
   let userData = JSON.parse(localStorage.getItem("userContext") || "null");
 
   const handleDrawerToggle = () => {
@@ -93,6 +96,7 @@ function App() {
               path="/doctor/:id"
               element={
                 <Doctor
+                  setAppointment={setAppointment}
                   mobileOpen={mobileOpen}
                   handleDrawerToggle={handleDrawerToggle}
                 />
@@ -147,6 +151,7 @@ function App() {
                   <BookAppointment
                     mobileOpen={mobileOpen}
                     handleDrawerToggle={handleDrawerToggle}
+                    appointment={appointment}
                   />
                 </ProtectedRoute>
               }
