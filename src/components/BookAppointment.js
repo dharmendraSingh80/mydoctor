@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Box, Paper } from "@mui/material";
+import { Alert, Box, Paper } from "@mui/material";
 import ResponsiveDrawer from "./pages/SideBar";
 
 import Stepper from "@mui/material/Stepper";
@@ -11,13 +11,25 @@ import PatientDetails from "./pages/PatientDetails";
 import AppointmentDetails from "./pages/AppointmentDetails";
 import { useNavigate } from "react-router-dom";
 import PaymentDetails from "./pages/PaymentDetails";
+import { makePayment } from "../api";
 
 export default function BookAppointment({
   mobileOpen,
   handleDrawerToggle,
   appointment,
+  setAppointmentAlert,
 }) {
+  const [paymentData, setPaymentData] = React.useState({
+    cardNumber: "",
+    cvv: "",
+    month: "",
+    year: "",
+  });
   const [activeStep, setActiveStep] = React.useState(0);
+  const [paymentErrors, setPaymentErrors] = React.useState({
+    cardNumber: "",
+    cvv: "",
+  });
   const navigate = useNavigate();
   let userData = JSON.parse(localStorage.getItem("userContext") || "null");
 
@@ -27,6 +39,70 @@ export default function BookAppointment({
 
   const handleBack = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
+  };
+  const inputHandleChange = (event) => {
+    const { name, value } = event.target;
+    setPaymentData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+  const currentDate = new Date();
+  const currentYear = currentDate.getFullYear();
+  React.useEffect(() => {
+    if (!appointment) {
+      navigate("/");
+    }
+    const currentMonth = currentDate.getMonth() + 1;
+    setPaymentData((prev) => {
+      return {
+        ...prev,
+        year: currentYear,
+        month: currentMonth.toString().padStart(2, "0"),
+      };
+    });
+  }, []);
+
+  const validationPatterns = {
+    cardNumber: /\b\d{16}\b/g,
+    cvv: /^\d{4}$/,
+  };
+  const validationMessages = {
+    cardNumber: "Please enter a valid 16 digit card Number",
+    cvv: "Please enter a valid security code",
+  };
+
+  const validateInput = (e) => {
+    let { name, value } = e.target;
+    setPaymentErrors((prev) => {
+      const stateObj = { ...prev, [name]: "" };
+      const validationPattern = validationPatterns[name];
+      if (validationPattern && !validationPattern.test(value)) {
+        stateObj[name] = validationMessages[name];
+      }
+      return stateObj;
+    });
+  };
+
+  const handleSubmit = async () => {
+    const paymentDetails = {
+      cardNumber: paymentData.cardNumber,
+      cvv: paymentData.cvv,
+      doctorId: appointment.doctorId,
+      expiryDate: `${paymentData.month}-${paymentData.year}`,
+      slotId: appointment._id,
+    };
+    const response = await makePayment(paymentDetails);
+    if (response.code !== 427) {
+      setAppointmentAlert(
+        <Alert severity="success">Appointment booking successfull!</Alert>
+      );
+    } else {
+      setAppointmentAlert(
+        <Alert severity="error">Appointment booking failed!.</Alert>
+      );
+    }
+    navigate("/appointments");
   };
 
   return (
@@ -83,7 +159,12 @@ export default function BookAppointment({
           ) : (
             <>
               <Typography variant="h4">Payment Details</Typography>
-              <PaymentDetails />
+              <PaymentDetails
+                paymentData={paymentData}
+                inputHandleChange={inputHandleChange}
+                validateInput={validateInput}
+                paymentErrors={paymentErrors}
+              />
             </>
           )}
 
@@ -107,7 +188,25 @@ export default function BookAppointment({
               BACK
             </Button>
             <Box sx={{ position: "relative" }}>
-              <Button fullWidth variant="contained" onClick={handleNext}>
+              <Button
+                fullWidth
+                variant="contained"
+                disabled={
+                  activeStep === steps.length - 1
+                    ? !paymentData.cardNumber ||
+                      !paymentData.cvv ||
+                      paymentErrors.cardNumber ||
+                      paymentErrors.cvv
+                    : false
+                }
+                onClick={() => {
+                  if (activeStep === steps.length - 1) {
+                    handleSubmit();
+                  } else {
+                    handleNext();
+                  }
+                }}
+              >
                 {activeStep === steps.length - 2
                   ? "CONFIRM AND PROCEED"
                   : activeStep === steps.length - 1

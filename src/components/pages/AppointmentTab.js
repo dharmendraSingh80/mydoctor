@@ -50,7 +50,7 @@ export default function AppointmentTab({ slots, setAppointment }) {
   };
 
   const handleSlots = (slot) => {
-    if (userData.user) {
+    if (userData) {
       setAppointment(slot);
       navigate("/book-appointment");
     }
@@ -88,6 +88,7 @@ export default function AppointmentTab({ slots, setAppointment }) {
               fontSize: "1rem",
             },
           }}
+          centered
         >
           {slots.map((slot, index) => (
             <Tab key={index} value={index} label={formatDate(slot.startTime)} />

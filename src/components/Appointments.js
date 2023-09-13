@@ -17,7 +17,11 @@ import FolderIcon from "@mui/icons-material/Folder";
 import DeleteIcon from "@mui/icons-material/Delete";
 import "../styles/loader.css";
 
-export default function Appointments({ mobileOpen, handleDrawerToggle }) {
+export default function Appointments({
+  mobileOpen,
+  handleDrawerToggle,
+  appointmentAlert,
+}) {
   const [totalAppointments, setTotalAppointments] = useState([]);
   const [record, setRecord] = useState(10);
   const [loading, setLoading] = useState(true);
@@ -95,6 +99,7 @@ export default function Appointments({ mobileOpen, handleDrawerToggle }) {
             </FormControl>
           </Box>
         </Box>
+        {appointmentAlert}
         {loading ? (
           <div className="loading-container">
             <div className="loader"></div>

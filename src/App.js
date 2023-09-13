@@ -29,6 +29,7 @@ function App() {
   });
 
   const [appointment, setAppointment] = useState("");
+  const [appointmentAlert, setAppointmentAlert] = useState(null);
 
   let userData = JSON.parse(localStorage.getItem("userContext") || "null");
 
@@ -118,6 +119,7 @@ function App() {
                   <Appointments
                     mobileOpen={mobileOpen}
                     handleDrawerToggle={handleDrawerToggle}
+                    appointmentAlert={appointmentAlert}
                   />
                 </ProtectedRoute>
               }
@@ -152,6 +154,7 @@ function App() {
                     mobileOpen={mobileOpen}
                     handleDrawerToggle={handleDrawerToggle}
                     appointment={appointment}
+                    setAppointmentAlert={setAppointmentAlert}
                   />
                 </ProtectedRoute>
               }

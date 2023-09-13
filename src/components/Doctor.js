@@ -45,7 +45,7 @@ export default function Doctor({
           sx={{
             width: "100%",
             display: "flex",
-            maxWidth: "1440px",
+            maxWidth: { lg: "1400px", md: "1200px", sm: "650px", xs: "320px" },
             marginTop: "30px",
             alignItems: "flex-start",
             flexDirection: "column",

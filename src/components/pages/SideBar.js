@@ -7,6 +7,7 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import PersonSharpIcon from "@mui/icons-material/PersonSharp";
+import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import BubbleChartSharpIcon from "@mui/icons-material/BubbleChartSharp";
 import CloseIcon from "@mui/icons-material/Close";
 import IconButton from "@mui/material/IconButton";
@@ -14,6 +15,7 @@ import { styled } from "@mui/material/styles";
 import { Link, useLocation } from "react-router-dom";
 import EventNoteIcon from "@mui/icons-material/EventNote";
 import NestedDrawer from "./NestedDrawer";
+import NestedDrawerDoctor from "./NestedDrawerDoctor";
 
 const drawerWidth = 240;
 const DrawerHeader = styled("div")(({ theme }) => ({
@@ -31,6 +33,7 @@ function ResponsiveDrawer(props) {
   const [isNestedDrawerOpen, setIsNestedDrawerOpen] = React.useState(false);
 
   let userData = JSON.parse(localStorage.getItem("userContext") || "null");
+  console.log(userData);
 
   const menuItems = [
     { text: "Doctors", icon: <PersonSharpIcon />, link: "/" },
@@ -51,6 +54,29 @@ function ResponsiveDrawer(props) {
     },
   ];
 
+  const menuItemsDoctor = [
+    {
+      text: "Dashboard",
+      icon: <PersonOutlineIcon />,
+      link: "/doctor-dashboard",
+    },
+    {
+      text: "Doctor Profile",
+      icon: <PersonOutlineIcon />,
+      link: "/doctor-profile",
+    },
+    {
+      text: "Appointments",
+      icon: <PersonOutlineIcon />,
+      link: "/doctor-appointments",
+    },
+    {
+      text: "Reviews",
+      icon: <PersonOutlineIcon />,
+      link: "/",
+    },
+  ];
+
   const drawer = (
     <Box sx={{ marginTop: { md: 17 } }}>
       <DrawerHeader sx={{ display: { md: "none" } }}>
@@ -59,21 +85,47 @@ function ResponsiveDrawer(props) {
         </IconButton>
       </DrawerHeader>
       <List>
-        {menuItems
-          .filter((item) => {
-            if (
-              item.text === "Account Settings" ||
-              item.text === "My Appointments"
-            ) {
-              return userData?.user?.role === "patient";
-            }
-            return true; // Show other items unconditionally
-          })
-          .map((item, index) => (
-            <>
-              {item.text !== "Account Settings" ? (
+        {(userData?.user?.role === "doctor"
+          ? menuItemsDoctor
+          : menuItems.filter((item) => {
+              if (
+                item.text === "Account Settings" ||
+                item.text === "My Appointments"
+              ) {
+                return userData?.user?.role === "patient";
+              }
+              return true; // Show other items unconditionally
+            })
+        ).map((item, index) => (
+          <>
+            {item.text !== "Account Settings" &&
+            item.text !== "Doctor Profile" ? (
+              <ListItem
+                key={index}
+                component={Link}
+                to={item.link}
+                sx={{
+                  textDecoration: "none",
+                  color: "inherit",
+                }}
+                disablePadding
+              >
+                <ListItemButton
+                  selected={selectedItem === index}
+                  sx={{
+                    backgroundColor:
+                      selectedItem === index
+                        ? "#eeeeee !important"
+                        : "transparent",
+                  }}
+                >
+                  <ListItemIcon>{item.icon}</ListItemIcon>
+                  <ListItemText primary={item.text} />
+                </ListItemButton>
+              </ListItem>
+            ) : (
+              <>
                 <ListItem
-                  key={index}
                   component={Link}
                   to={item.link}
                   sx={{
@@ -82,49 +134,30 @@ function ResponsiveDrawer(props) {
                   }}
                   disablePadding
                 >
-                  <ListItemButton
-                    selected={selectedItem === index}
-                    sx={{
-                      backgroundColor:
-                        selectedItem === index
-                          ? "#eeeeee !important"
-                          : "transparent",
-                    }}
-                  >
+                  <ListItemButton>
                     <ListItemIcon>{item.icon}</ListItemIcon>
                     <ListItemText primary={item.text} />
                   </ListItemButton>
                 </ListItem>
-              ) : (
-                <>
-                  <ListItem
-                    component={Link}
-                    to={item.link}
-                    sx={{
-                      textDecoration: "none",
-                      color: "inherit",
-                    }}
-                    disablePadding
-                  >
-                    <ListItemButton>
-                      <ListItemIcon>{item.icon}</ListItemIcon>
-                      <ListItemText primary={item.text} />
-                    </ListItemButton>
-                  </ListItem>
-                  {isNestedDrawerOpen && <NestedDrawer />}
-                </>
-              )}
-            </>
-          ))}
+                {isNestedDrawerOpen &&
+                  (userData?.user?.role === "doctor" ? (
+                    <NestedDrawerDoctor />
+                  ) : (
+                    <NestedDrawer />
+                  ))}
+              </>
+            )}
+          </>
+        ))}
       </List>
     </Box>
   );
 
   React.useEffect(() => {
     // Find the index of the current pathname in the menu items
-    const currentIndex = menuItems.findIndex(
-      (item) => item.link === location.pathname
-    );
+    const currentIndex = (
+      userData?.user?.role === "doctor" ? menuItemsDoctor : menuItems
+    ).findIndex((item) => item.link === location.pathname);
     // Check if the current pathname matches "/myprofile" or "/changepassword"
     const isProfileOrChangePassword =
       location.pathname === "/myprofile" ||

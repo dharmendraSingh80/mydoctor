@@ -6,14 +6,21 @@ import unionpayIcon from "../../myIcon/unionpay.svg";
 import americanExpressIcon from "../../myIcon/american_express.svg";
 import masterCardIcon from "../../myIcon/master_card.svg";
 import jcbIcon from "../../myIcon/jcb.svg";
+import { useState } from "react";
 
-export default function PaymentDetails() {
+export default function PaymentDetails({
+  paymentData,
+  inputHandleChange,
+  validateInput,
+  paymentErrors,
+}) {
   const currentDate = new Date();
   const currentYear = currentDate.getFullYear();
   const years = [];
   for (let year = currentYear; year <= 2053; year++) {
     years.push({ value: year.toString(), label: year.toString() });
   }
+
   return (
     <Box
       sx={{
@@ -34,7 +41,6 @@ export default function PaymentDetails() {
           <img src={maestroIcon} alt="visa" />
           <img src={westernUnionIcon} alt="visa" />
           <img src={unionpayIcon} alt="visa" />
-
           <img src={americanExpressIcon} alt="visa" />
           <img src={masterCardIcon} alt="visa" />
           <img src={unionpayIcon} alt="visa" />
@@ -46,6 +52,15 @@ export default function PaymentDetails() {
             label="Credit/Debit Card Number"
             placeholder="XXXX-XXXX-XXXX-XXXX"
             id="fullWidth"
+            helperText={
+              paymentErrors.cardNumber ? paymentErrors.cardNumber : ""
+            }
+            inputProps={{ maxLength: 16 }}
+            name="cardNumber"
+            error={paymentErrors.cardNumber}
+            onBlur={validateInput}
+            onChange={inputHandleChange}
+            value={paymentData.cardNumber}
           />
         </Grid>
         <Grid item xs={12} md={6}>
@@ -53,7 +68,9 @@ export default function PaymentDetails() {
             id="outlined-select-currency"
             select
             label="Expiration month"
-            defaultValue="09 | September"
+            value={paymentData.month}
+            name="month"
+            onChange={inputHandleChange}
           >
             {months.map((option) => (
               <MenuItem key={option.value} value={option.value}>
@@ -67,7 +84,9 @@ export default function PaymentDetails() {
             id="outlined-select-currency"
             select
             label="Expiration year"
-            defaultValue="2023"
+            name="year"
+            value={paymentData.year}
+            onChange={inputHandleChange}
           >
             {years.map((option) => (
               <MenuItem key={option.value} value={option.value}>
@@ -82,6 +101,13 @@ export default function PaymentDetails() {
             label="Security code"
             placeholder="XXXX"
             id="fullWidth"
+            helperText={paymentErrors.cvv ? paymentErrors.cvv : ""}
+            error={paymentErrors.cvv}
+            name="cvv"
+            onBlur={validateInput}
+            value={paymentData.cvv}
+            inputProps={{ maxLength: 4 }}
+            onChange={inputHandleChange}
           />
         </Grid>
       </Grid>

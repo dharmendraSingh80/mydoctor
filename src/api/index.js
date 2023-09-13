@@ -149,7 +149,6 @@ export default async function patientAppointment() {
 
 export async function uploadPatientImage(data) {
   try {
-    console.log(userData);
     let response = await fetch(
       `${process.env.REACT_APP_BASE_URL}/patients/${userData.user._id}`,
       {
@@ -214,6 +213,19 @@ export async function updatePatientData(data) {
       body: JSON.stringify(data),
     }
   );
+  response = await response.json();
+  return response;
+}
+
+export async function makePayment(data) {
+  let response = await fetch(`${process.env.REACT_APP_BASE_URL}/payments`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${userData.accessToken}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
   response = await response.json();
   return response;
 }

@@ -21,12 +21,14 @@ import Swiper from "./pages/Swiper";
 import PermIdentityIcon from "@mui/icons-material/PermIdentity";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
+import { getPatientImage } from "../api";
 
 function Navbar({ handleDrawerToggle, dataSpeciality }) {
   const [selectedValue, setSelectedValue] = useState({
     autocomplete: "",
     typeSearch: "",
   });
+  const [selectedImage, setSelectedImage] = useState(null);
 
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
@@ -132,6 +134,21 @@ function Navbar({ handleDrawerToggle, dataSpeciality }) {
     });
   }, [sp]);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await getPatientImage();
+        if (data.name === "NotAuthenticated") {
+          navigate("/auth/login");
+        }
+        setSelectedImage(data.avatar.buffer);
+      } catch (error) {
+        console.error("Error fetching patient image:", error);
+      }
+    };
+    fetchData();
+  }, [selectedImage]);
+
   return (
     <div className={styles.nav_wrapper}>
       <nav className={styles.navbar}>
@@ -184,7 +201,7 @@ function Navbar({ handleDrawerToggle, dataSpeciality }) {
                 aria-expanded={open ? "true" : undefined}
                 onClick={handleClick}
               >
-                <Avatar src="/broken-image.jpg" />
+                <Avatar src={selectedImage || "/broken-image.jpg"} />
               </IconButton>
               <Menu
                 id="demo-positioned-menu"
