@@ -229,3 +229,17 @@ export async function makePayment(data) {
   response = await response.json();
   return response;
 }
+
+export async function getDocotor() {
+  let response = await fetch(
+    `${process.env.REACT_APP_BASE_URL}/doctors/${userData.user._id}`,
+    {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${userData.accessToken}`,
+      },
+    }
+  );
+  response = await response.json();
+  return response;
+}

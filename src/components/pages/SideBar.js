@@ -33,7 +33,6 @@ function ResponsiveDrawer(props) {
   const [isNestedDrawerOpen, setIsNestedDrawerOpen] = React.useState(false);
 
   let userData = JSON.parse(localStorage.getItem("userContext") || "null");
-  console.log(userData);
 
   const menuItems = [
     { text: "Doctors", icon: <PersonSharpIcon />, link: "/" },
@@ -159,9 +158,13 @@ function ResponsiveDrawer(props) {
       userData?.user?.role === "doctor" ? menuItemsDoctor : menuItems
     ).findIndex((item) => item.link === location.pathname);
     // Check if the current pathname matches "/myprofile" or "/changepassword"
+    const currentPath = location.pathname;
     const isProfileOrChangePassword =
-      location.pathname === "/myprofile" ||
-      location.pathname === "/changepassword";
+      currentPath === "/myprofile" ||
+      currentPath === "/changepassword" ||
+      currentPath === "/doctor-profile" ||
+      currentPath === "/doctor-profile/qualification" ||
+      currentPath === "/doctor-profile/experience";
     // Update the selected item index and isNestedDrawerOpen
     setSelectedItem(currentIndex);
     setIsNestedDrawerOpen(isProfileOrChangePassword);

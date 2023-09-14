@@ -16,6 +16,7 @@ import Appointments from "./components/Appointments";
 import PatientProfile from "./components/PatientProfile";
 import ChangePassword from "./components/ChangePassword";
 import BookAppointment from "./components/BookAppointment";
+import DoctorProfile from "./components/DoctorProfile";
 
 function App() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -155,6 +156,31 @@ function App() {
                     handleDrawerToggle={handleDrawerToggle}
                     appointment={appointment}
                     setAppointmentAlert={setAppointmentAlert}
+                  />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/doctor-appointments"
+              element={
+                <ProtectedRoute userData={{ userData }}>
+                  <Appointments
+                    mobileOpen={mobileOpen}
+                    handleDrawerToggle={handleDrawerToggle}
+                    appointmentAlert={appointmentAlert}
+                  />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/doctor-profile"
+              element={
+                <ProtectedRoute userData={{ userData }}>
+                  <DoctorProfile
+                    mobileOpen={mobileOpen}
+                    handleDrawerToggle={handleDrawerToggle}
                   />
                 </ProtectedRoute>
               }
