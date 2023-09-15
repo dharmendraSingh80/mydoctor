@@ -13,7 +13,12 @@ import ResponsiveDrawer from "./pages/SideBar";
 import Paper from "@mui/material/Paper";
 import { useEffect, useState } from "react";
 import "../styles/loader.css";
-import { getDocotor, getPatientImage, uploadPatientImage } from "../api";
+import {
+  getDocotor,
+  getDoctorImage,
+  updateDoctorData,
+  uploadDoctorImage,
+} from "../api";
 import { useNavigate } from "react-router-dom";
 
 export default function DoctorProfile({ mobileOpen, handleDrawerToggle }) {
@@ -72,6 +77,28 @@ export default function DoctorProfile({ mobileOpen, handleDrawerToggle }) {
   const handleSaveClick = async () => {
     setEditing(false);
     const userName = editData.fullName.split(" ");
+    const userDetails = {
+      firstName: userName[0],
+      gender: editData.gender,
+      lastName: userName[1],
+      profile: {
+        bio: editData.bio,
+        consultationFee: editData.consultationFee,
+        languages: editData.languages,
+      },
+    };
+
+    try {
+      const response = await updateDoctorData(userDetails);
+      if (response.enabled) {
+        console.log("Doctor updated successfully");
+      } else {
+        console.log("Unable to update");
+      }
+      fetchDoctor();
+    } catch (error) {
+      console.error("Error updating patient data:", error);
+    }
   };
 
   const inputHandleChange = (event) => {
@@ -96,7 +123,7 @@ export default function DoctorProfile({ mobileOpen, handleDrawerToggle }) {
       formData.append("avatar", selectedFile);
       setLoading(true);
       try {
-        const data = await uploadPatientImage(formData);
+        const data = await uploadDoctorImage(formData);
         const reader = new FileReader();
         reader.onload = (e) => {
           setSelectedImage(e.target.result);
@@ -121,7 +148,7 @@ export default function DoctorProfile({ mobileOpen, handleDrawerToggle }) {
             contactNumber: doc.contactNumber || "",
             gender: doc.gender || "",
             consultationFee: doc.profile?.consultationFee || "N/a",
-            Languages: doc.profile?.languages || "N/a",
+            languages: doc.profile?.languages || "N/a",
             bio: doc.profile?.bio || "N/a",
           };
           // Set the default values into the state
@@ -136,7 +163,7 @@ export default function DoctorProfile({ mobileOpen, handleDrawerToggle }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await getPatientImage();
+        const data = await getDoctorImage();
         if (data.name === "NotAuthenticated") {
           navigate("/auth/login");
         }
@@ -194,7 +221,7 @@ export default function DoctorProfile({ mobileOpen, handleDrawerToggle }) {
                     sx={{
                       position: "absolute",
                       top: "50%",
-                      left: "35%",
+                      left: "20%",
                       transform: "translate(-50%, -50%)",
                       zIndex: 1,
                     }}
@@ -220,7 +247,7 @@ export default function DoctorProfile({ mobileOpen, handleDrawerToggle }) {
                     fontSize: { xs: "12px", md: "18px" },
                   }}
                 >
-                  Upload Image
+                  {editing ? "Change Image" : "Upload Image"}
                 </Box>
               </label>
             </Grid>
@@ -350,7 +377,9 @@ export default function DoctorProfile({ mobileOpen, handleDrawerToggle }) {
                   id="tags-outlined"
                   options={languages_list}
                   getOptionLabel={(option) => option.name}
-                  value={editData.languages.map((item) => item)}
+                  value={editData.languages.map((language) => ({
+                    name: language.name,
+                  }))}
                   filterSelectedOptions
                   disabled={!editing}
                   onChange={handleAutocomplete}

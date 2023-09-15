@@ -243,3 +243,59 @@ export async function getDocotor() {
   response = await response.json();
   return response;
 }
+
+export async function updateDoctorData(data) {
+  let response = await fetch(
+    `${process.env.REACT_APP_BASE_URL}/doctors/${userData.user._id}`,
+    {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${userData.accessToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    }
+  );
+  response = await response.json();
+  return response;
+}
+
+export async function uploadDoctorImage(data) {
+  try {
+    let response = await fetch(
+      `${process.env.REACT_APP_BASE_URL}/doctors/${userData.user._id}`,
+      {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${userData.accessToken}`,
+        },
+        body: data,
+      }
+    );
+    response = await response.json();
+    return response;
+  } catch (error) {
+    console.error("Error:", error);
+    throw error;
+  }
+}
+
+export async function getDoctorImage() {
+  const queryParams = new URLSearchParams({
+    avatar: 1,
+    "$select[]": "avatarId",
+  });
+  let response = await fetch(
+    `${process.env.REACT_APP_BASE_URL}/doctors/${
+      userData.user._id
+    }?${queryParams.toString()}`,
+    {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${userData.accessToken}`,
+      },
+    }
+  );
+  response = await response.json();
+  return response;
+}
