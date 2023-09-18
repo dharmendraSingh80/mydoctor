@@ -41,6 +41,7 @@ export default function NestedDrawer() {
             component={Link}
             to={item.link}
             disablePadding
+            sx={{ pt: "8px", pb: "8px" }}
             onClick={() => handleItemClick(index)}
           >
             <ListItemButton

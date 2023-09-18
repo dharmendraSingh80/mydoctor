@@ -145,6 +145,7 @@ export default function PatientProfile({ mobileOpen, handleDrawerToggle }) {
       try {
         const data = await getPatientImage();
         if (data.name === "NotAuthenticated") {
+          localStorage.removeItem("userContext");
           navigate("/auth/login");
         }
         setSelectedImage(data.avatar.buffer);

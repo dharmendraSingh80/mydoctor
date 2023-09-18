@@ -106,6 +106,8 @@ function ResponsiveDrawer(props) {
                 sx={{
                   textDecoration: "none",
                   color: "inherit",
+                  pt: "8px",
+                  pb: "8px",
                 }}
                 disablePadding
               >
@@ -130,6 +132,8 @@ function ResponsiveDrawer(props) {
                   sx={{
                     textDecoration: "none",
                     color: "inherit",
+                    pt: "8px",
+                    pb: "8px",
                   }}
                   disablePadding
                 >
