@@ -17,7 +17,7 @@ import EventNoteIcon from "@mui/icons-material/EventNote";
 import NestedDrawer from "./NestedDrawer";
 import NestedDrawerDoctor from "./NestedDrawerDoctor";
 
-const drawerWidth = 240;
+const drawerWidth = 255;
 const DrawerHeader = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "center",
@@ -121,7 +121,14 @@ function ResponsiveDrawer(props) {
                   }}
                 >
                   <ListItemIcon>{item.icon}</ListItemIcon>
-                  <ListItemText primary={item.text} />
+                  <ListItemText
+                    sx={{
+                      "& .css-10hburv-MuiTypography-root": {
+                        fontSize: "1.1rem",
+                      },
+                    }}
+                    primary={item.text}
+                  />
                 </ListItemButton>
               </ListItem>
             ) : (
@@ -139,7 +146,14 @@ function ResponsiveDrawer(props) {
                 >
                   <ListItemButton>
                     <ListItemIcon>{item.icon}</ListItemIcon>
-                    <ListItemText primary={item.text} />
+                    <ListItemText
+                      sx={{
+                        "& .css-10hburv-MuiTypography-root": {
+                          fontSize: "1.1rem",
+                        },
+                      }}
+                      primary={item.text}
+                    />
                   </ListItemButton>
                 </ListItem>
                 {isNestedDrawerOpen &&

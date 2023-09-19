@@ -206,6 +206,7 @@ function App() {
                   <ExperienceDocotr
                     mobileOpen={mobileOpen}
                     handleDrawerToggle={handleDrawerToggle}
+                    dataSpeciality={info.speciality}
                   />
                 </ProtectedRoute>
               }

@@ -16,7 +16,7 @@ import {
 import SearchIcon from "@mui/icons-material/Search";
 import "../styles/loader.css";
 
-const drawerWidth = 240;
+const drawerWidth = 255;
 
 export default function Specialities({ speciality, totalSpeciality }) {
   // Number of items to show per page

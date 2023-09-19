@@ -8,7 +8,7 @@ import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
 import "../styles/loader.css";
 
-const drawerWidth = 240;
+const drawerWidth = 255;
 export default function Home({
   speciality,
   totalSpeciality,

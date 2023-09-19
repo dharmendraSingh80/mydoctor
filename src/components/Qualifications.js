@@ -14,14 +14,14 @@ import { getDocotor, updateDoctorData } from "../api";
 
 export default function Qualifications({ mobileOpen, handleDrawerToggle }) {
   const [editing, setEditing] = useState(false);
-  const [editData, setEditData] = useState([]);
+  const [editData, setEditData] = useState([{}]);
   const [editErrors, setEditErrors] = useState([]);
-  const [paperCount, setPaperCount] = useState(1);
+  // const [paperCount, setPaperCount] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
 
   const fetchData = async () => {
     const doctor = await getDocotor();
-    setEditData(doctor?.profile?.qualifications || []);
+    setEditData(doctor?.profile?.qualifications || [{}]);
     setIsLoading(false);
   };
   useEffect(() => {
@@ -40,7 +40,7 @@ export default function Qualifications({ mobileOpen, handleDrawerToggle }) {
     const updatedData = [...editData];
     updatedData.splice(index, 1);
     setEditData(updatedData);
-    setPaperCount(paperCount - 1);
+    // setPaperCount(paperCount - 1);
   };
 
   const inputHandleChange = (event, index) => {
@@ -241,7 +241,8 @@ export default function Qualifications({ mobileOpen, handleDrawerToggle }) {
                       disabled={
                         Object.values(editErrors).some((errors) =>
                           Object.values(errors).some((error) => error !== "")
-                        ) || editData.length === 0
+                        ) ||
+                        editData.some((item) => Object.keys(item).length === 0)
                       }
                     >
                       SAVE

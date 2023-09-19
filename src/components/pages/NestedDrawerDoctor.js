@@ -63,7 +63,14 @@ export default function NestedDrawerDoctor() {
               }}
             >
               <ListItemIcon>{item.icon}</ListItemIcon>
-              <ListItemText primary={item.text} />
+              <ListItemText
+                sx={{
+                  "& .css-10hburv-MuiTypography-root": {
+                    fontSize: "1.1rem",
+                  },
+                }}
+                primary={item.text}
+              />
             </ListItemButton>
           </ListItem>
         ))}
