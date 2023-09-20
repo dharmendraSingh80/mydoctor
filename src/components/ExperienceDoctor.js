@@ -1,23 +1,17 @@
 import {
+  Alert,
   Autocomplete,
   Box,
   Button,
   Grid,
-  IconButton,
   Paper,
-  Switch,
   TextField,
   Typography,
 } from "@mui/material";
 import ResponsiveDrawer from "./pages/SideBar";
-import CloseIcon from "@mui/icons-material/Close";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { useEffect, useState } from "react";
-import { getDocotor } from "../api";
-import dayjs from "dayjs";
+import { useEffect, useMemo, useState } from "react";
+import { getDocotor, updateDoctorData } from "../api";
+import ExperiencePaper from "./pages/ExperiencePaper";
 
 export default function ExperienceDocotr({
   mobileOpen,
@@ -25,15 +19,17 @@ export default function ExperienceDocotr({
   dataSpeciality,
 }) {
   const [editing, setEditing] = useState(false);
-  // const [paperCount, setPaperCount] = useState(1);
-  const [editData, setEditData] = useState([{}]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [editData, setEditData] = useState([]);
   const [doctorProfileData, setDoctorProfileData] = useState({
     licenceNumber: "",
     specialities: [],
   });
   const [editErrors, setEditErrors] = useState([]);
+  const [dateErrors, setDateErrors] = useState(null);
+  const [licenceErrors, setLicenceErrors] = useState(null);
 
-  const label = { inputProps: { "aria-label": "Switch demo" } };
+  const [alert, setAlert] = useState(null);
 
   const addMorePaper = () => {
     setEditData([...editData, {}]);
@@ -46,23 +42,20 @@ export default function ExperienceDocotr({
 
       setDoctorProfileData((prev) => ({
         ...prev,
-        licenceNumber: doctor?.profile?.licenceNumber,
-        specialities: doctor?.profile?.specialities,
+        licenceNumber: doctor?.profile?.licenceNumber || "",
+        specialities: doctor?.profile?.specialities || [],
       }));
-      setEditData(doctor?.profile?.experience || [{}]);
-      // setIsLoading(false);
+      setEditData(doctor?.profile?.experience || []);
+      setIsLoading(false);
     } catch (error) {
       console.error("Error fetching data:", error);
-      // setIsLoading(false);
+      setIsLoading(false);
     }
   };
 
   useEffect(() => {
     fetchData();
   }, []);
-  const currentDate = new Date();
-  const year = currentDate.getFullYear(); // Get the current year (e.g., 2023)
-  const month = currentDate.getMonth() + 1;
 
   const removePaper = (index) => {
     const updatedData = [...editData];
@@ -71,161 +64,136 @@ export default function ExperienceDocotr({
     // setPaperCount(paperCount - 1);
   };
   const handleEditClick = () => {
+    if (editData.length === 0) {
+      setEditData([{}]);
+    }
     setEditing(!editing);
   };
 
-  const experiencePaper = (item, index) => (
-    <>
-      {editing && (
-        <Box sx={{ display: "flex", flexDirection: "row-reverse" }}>
-          <Box>
-            <IconButton onClick={removePaper} sx={{ mt: "15px" }}>
-              <CloseIcon color="primary" />
-            </IconButton>
-          </Box>
-        </Box>
-      )}
-      <Paper
-        key={index}
-        variant="outlined"
-        sx={{ display: "flex", flexWrap: "wrap", mt: "10px" }}
-      >
-        <Grid container spacing={3}>
-          <Grid item md={6} xs={12}>
-            <Paper elevation={0} square={false}>
-              <div>
-                <TextField
-                  required
-                  id="outlined-required"
-                  label="Position"
-                  name="position"
-                  sx={{ width: "70%", mt: "5%", ml: "15%", mb: "5%" }}
-                  value={item.position || ""}
-                  disabled={!editing}
-                />
-              </div>
-              <div>
-                <TextField
-                  required
-                  id="outlined-required"
-                  label="Hospital/Clinic"
-                  name="place"
-                  sx={{
-                    width: "70%",
-                    mt: "5%",
-                    ml: "15%",
-                    mb: "5%",
-                  }}
-                  value={item.place || ""}
-                  disabled={!editing}
-                />
-              </div>
-            </Paper>
-          </Grid>
+  const validationPatterns = {
+    licenceNumber: /^(?=.*[a-zA-Z]).+$/,
+    position: /^(?=.*[a-zA-Z]).{3,}$/,
+    place: /^(?=.*[a-zA-Z]).{3,}$/,
+  };
 
-          <Grid item md={6} xs={12}>
-            <Paper elevation={0} square={false}>
-              <Box
-                sx={{
-                  display: "flex",
-                  mt: "5px",
-                  alignItems: "center",
-                  ml: "18%",
-                  mb: "10px",
-                }}
-              >
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DemoContainer
-                    components={["DatePicker", "DatePicker", "DatePicker"]}
-                  >
-                    <DatePicker
-                      sx={{ ml: "3%" }}
-                      views={["month", "year"]}
-                      format="MM/YYYY"
-                      onChange={(value) => console.log(value)}
-                      value={
-                        dayjs(new Date(item.fromYear, item.fromMonth - 1, 1)) ||
-                        dayjs(new Date(year, month - 1, 1))
-                      }
-                      disabled={!editing}
-                    />
-                  </DemoContainer>
-                </LocalizationProvider>
-                <Typography
-                  sx={{
-                    color: "#696969",
-                    fontSize: "15px",
-                    fontWeight: 540,
-                    ml: "15px",
-                  }}
-                >
-                  Start Date*
-                </Typography>
-              </Box>
-              <Box
-                sx={{
-                  display: "flex",
-                  mt: "5px",
-                  alignItems: "center",
-                  ml: "18%",
-                  mb: "10px",
-                }}
-              >
-                <Switch
-                  {...label}
-                  checked={!item.toMonth}
-                  disabled={!editing}
-                />
-                <Typography
-                  sx={{
-                    color: "#696969",
-                    fontSize: "15px",
-                    fontWeight: 530,
-                    ml: "5px",
-                  }}
-                >
-                  Currently working
-                </Typography>
-              </Box>
-              <Box
-                sx={{
-                  display: "flex",
-                  mt: "5px",
-                  alignItems: "center",
-                  ml: "18%",
-                  mb: "10px",
-                }}
-              >
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DemoContainer
-                    components={["DatePicker", "DatePicker", "DatePicker"]}
-                  >
-                    <DatePicker
-                      sx={{ ml: "3%" }}
-                      views={["month", "year"]}
-                      format="MM/YYYY"
-                      value={dayjs(new Date(item.toYear, item.toMonth - 1, 1))}
-                      disabled={!editing}
-                    />
-                  </DemoContainer>
-                </LocalizationProvider>
-                <Typography
-                  sx={{
-                    color: "#696969",
-                    fontSize: "15px",
-                    fontWeight: 540,
-                    ml: "15px",
-                  }}
-                >
-                  End Date
-                </Typography>
-              </Box>
-            </Paper>
-          </Grid>
-        </Grid>
-      </Paper>
-    </>
-  );
+  const validationMessages = {
+    licenceNumber: "Please enter valid licences number",
+    position: "Please enter a valid position",
+    place: "Please enter a valid hospital name",
+  };
+
+  const validateInput = (e, index) => {
+    let { name, value } = e.target;
+    const validationPattern = validationPatterns[name];
+    if (name === "licenceNumber") {
+      if (!value || !validationPattern.test(value)) {
+        setLicenceErrors(validationMessages[name]);
+      } else {
+        setLicenceErrors("");
+      }
+    } else {
+      setEditErrors((prev) => {
+        const stateObj = { ...prev };
+        if (!value || !validationPattern.test(value)) {
+          stateObj[index] = {
+            ...stateObj[index],
+            [name]: validationMessages[name],
+          };
+        } else {
+          stateObj[index] = {
+            ...stateObj[index],
+            [name]: "", // Clear the error message when the input is valid
+          };
+        }
+        return stateObj;
+      });
+    }
+  };
+
+  const errorMessage = useMemo(() => {
+    switch (dateErrors) {
+      case "maxDate":
+      case "minDate": {
+        return "Please select a date within Period";
+      }
+
+      case "invalidDate": {
+        return "Please enter a valid date";
+      }
+
+      default: {
+        return "";
+      }
+    }
+  }, [dateErrors]);
+
+  const inputHandleChange = (event, index) => {
+    const { name, value } = event.target;
+    if (name === "licenceNumber") {
+      setDoctorProfileData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    } else {
+      const updatedData = [...editData];
+      updatedData[index] = {
+        ...updatedData[index],
+        [name]: value,
+      };
+      setEditData(updatedData);
+    }
+  };
+
+  const handleSpecialitites = (e, value) => {
+    setDoctorProfileData((prev) => ({
+      ...prev,
+      specialities: value,
+    }));
+  };
+
+  const handleDatePicker = (value, type, index) => {
+    const date = new Date(value);
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const updatedData = [...editData];
+    if (type === "startDate") {
+      updatedData[index] = {
+        ...updatedData[index],
+        fromYear: year,
+        fromMonth: month,
+      };
+      setEditData(updatedData);
+    } else {
+      updatedData[index] = {
+        ...updatedData[index],
+        toYear: year,
+        toMonth: month,
+      };
+    }
+  };
+
+  const handleSaveClick = async () => {
+    setEditing(false);
+    const userDetails = {
+      profile: {
+        licenceNumber: doctorProfileData.licenceNumber,
+        specialities: doctorProfileData.specialities.map((item) => item._id),
+        experience: editData,
+      },
+    };
+
+    try {
+      const response = await updateDoctorData(userDetails);
+      if (response.enabled) {
+        console.log("doctor experience updated successfully");
+      } else {
+        setAlert(<Alert severity="error">something went wrong</Alert>);
+      }
+      fetchData();
+    } catch (error) {
+      console.error("Error updating doctor data:", error);
+    }
+  };
 
   return (
     <Box
@@ -245,116 +213,171 @@ export default function ExperienceDocotr({
         component="main"
         sx={{ p: "32px", flexGrow: 1, backgroundColor: "#fafafa" }}
       >
-        <Box sx={{ width: "100%" }}>
-          <Box sx={{ display: "flex" }}>
-            <Box sx={{ flexGrow: 1 }}>
-              <Typography
-                sx={{ color: "#000000", fontSize: "25px", fontWeight: "bold" }}
+        {isLoading ? (
+          <Typography variant="body1" color="text.secondary">
+            Loading...
+          </Typography>
+        ) : (
+          <>
+            {alert}
+            <Box sx={{ width: "100%" }}>
+              <Box sx={{ display: "flex" }}>
+                <Box sx={{ flexGrow: 1 }}>
+                  <Typography
+                    sx={{
+                      color: "#000000",
+                      fontSize: "25px",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    My Experience
+                  </Typography>
+                </Box>
+                <Box>
+                  {editing ? (
+                    <>
+                      <Button
+                        sx={{ height: "40px", mr: "10px" }}
+                        variant="contained"
+                        onClick={handleEditClick}
+                      >
+                        CANCEL
+                      </Button>
+                      <Button
+                        sx={{ height: "40px" }}
+                        variant="contained"
+                        onClick={handleSaveClick}
+                        disabled={
+                          Object.values(editErrors).some((errors) =>
+                            Object.values(errors).some((error) => error !== "")
+                          ) ||
+                          editData.some(
+                            (item) => Object.keys(item).length === 0
+                          ) ||
+                          !doctorProfileData.licenceNumber ||
+                          doctorProfileData.specialities?.length === 0 ||
+                          licenceErrors
+                        }
+                      >
+                        SAVE
+                      </Button>
+                    </>
+                  ) : (
+                    <Button variant="contained" onClick={handleEditClick}>
+                      Edit
+                    </Button>
+                  )}
+                </Box>
+              </Box>
+              <Paper
+                variant="outlined"
+                sx={{
+                  display: "flex",
+                  flexWrap: "wrap",
+
+                  mt: "10px",
+                }}
               >
-                My Experience
-              </Typography>
-            </Box>
-            <Box>
+                <Grid
+                  container
+                  spacing={3}
+                  sx={{
+                    mt: "10px",
+                    ml: "20px",
+                    mb: "25px",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <Grid item xs={12} md={6}>
+                    <Box>
+                      <TextField
+                        required
+                        id="outlined-required"
+                        label="Licence Number"
+                        name="licenceNumber"
+                        onChange={inputHandleChange}
+                        error={licenceErrors}
+                        value={doctorProfileData.licenceNumber}
+                        sx={{ width: "70%", ml: "10%" }}
+                        disabled={!editing}
+                        onBlur={validateInput}
+                        helperText={licenceErrors}
+                      />
+                    </Box>
+                  </Grid>
+                  <Grid item xs={12} md={6}>
+                    <Box>
+                      <Autocomplete
+                        multiple
+                        id="tags-outlined"
+                        options={dataSpeciality}
+                        getOptionLabel={(option) => option?.name}
+                        value={doctorProfileData.specialities?.map((item) => ({
+                          name: item.name,
+                        }))}
+                        filterSelectedOptions
+                        onChange={handleSpecialitites}
+                        disabled={!editing}
+                        sx={{ width: "70%", ml: "10%" }}
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            label="Speciality(ies)"
+                            required
+                          />
+                        )}
+                      />
+                    </Box>
+                  </Grid>
+                </Grid>
+              </Paper>
               {editing ? (
                 <>
-                  <Button
-                    sx={{ height: "40px", mr: "10px" }}
-                    variant="contained"
-                    onClick={handleEditClick}
-                  >
-                    CANCEL
-                  </Button>
-                  <Button
-                    sx={{ height: "40px" }}
-                    variant="contained"
-                    // onClick={handleSaveClick}
-                    disabled={
-                      Object.values(editErrors).some((errors) =>
-                        Object.values(errors).some((error) => error !== "")
-                      ) ||
-                      editData.some((item) => Object.keys(item).length === 0)
-                    }
-                  >
-                    SAVE
-                  </Button>
+                  {editData.map((item, index) => (
+                    <ExperiencePaper
+                      item={item}
+                      index={index}
+                      editing={editing}
+                      removePaper={removePaper}
+                      editErrors={editErrors}
+                      inputHandleChange={inputHandleChange}
+                      validateInput={validateInput}
+                      setDateErrors={setDateErrors}
+                      handleDatePicker={handleDatePicker}
+                      errorMessage={errorMessage}
+                    />
+                  ))}
+
+                  <Box sx={{ display: "flex", flexDirection: "row-reverse" }}>
+                    <Button
+                      variant="contained"
+                      onClick={addMorePaper}
+                      sx={{ mt: "10px", mb: "10px" }}
+                    >
+                      ADD MORE
+                    </Button>
+                  </Box>
                 </>
               ) : (
-                <Button variant="contained" onClick={handleEditClick}>
-                  Edit
-                </Button>
+                editData.map((item, index) => (
+                  <ExperiencePaper
+                    item={item}
+                    index={index}
+                    editing={editing}
+                    removePaper={removePaper}
+                    editErrors={editErrors}
+                    inputHandleChange={inputHandleChange}
+                    validateInput={validateInput}
+                    setDateErrors={setDateErrors}
+                    handleDatePicker={handleDatePicker}
+                    errorMessage={errorMessage}
+                  />
+                ))
               )}
             </Box>
-          </Box>
-          <Paper
-            variant="outlined"
-            sx={{
-              display: "flex",
-              flexWrap: "wrap",
-
-              mt: "10px",
-            }}
-          >
-            <Grid
-              container
-              spacing={3}
-              sx={{
-                mt: "10px",
-                ml: "20px",
-                mb: "25px",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <Grid item xs={12} md={6}>
-                <Box>
-                  <TextField
-                    required
-                    id="outlined-required"
-                    label="Licence Number"
-                    value={doctorProfileData.licenceNumber}
-                    sx={{ width: "70%", ml: "10%" }}
-                    disabled={!editing}
-                  />
-                </Box>
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <Box>
-                  <Autocomplete
-                    multiple
-                    id="tags-outlined"
-                    options={dataSpeciality}
-                    getOptionLabel={(option) => option?.name}
-                    value={doctorProfileData.specialities.map((item) => ({
-                      name: item.name,
-                    }))}
-                    filterSelectedOptions
-                    disabled={!editing}
-                    sx={{ width: "70%", ml: "10%" }}
-                    renderInput={(params) => (
-                      <TextField {...params} label="Speciality(ies)" required />
-                    )}
-                  />
-                </Box>
-              </Grid>
-            </Grid>
-          </Paper>
-          {editing ? (
-            <>
-              {editData.map((item, index) => experiencePaper(item, index))}
-              <Box sx={{ display: "flex", flexDirection: "row-reverse" }}>
-                <Button
-                  variant="contained"
-                  onClick={addMorePaper}
-                  sx={{ mt: "10px", mb: "10px" }}
-                >
-                  ADD MORE
-                </Button>
-              </Box>
-            </>
-          ) : (
-            editData.map((item, index) => experiencePaper(item, index))
-          )}
-        </Box>
+          </>
+        )}
       </Box>
     </Box>
   );

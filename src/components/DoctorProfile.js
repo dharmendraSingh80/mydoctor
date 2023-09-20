@@ -222,7 +222,13 @@ export default function DoctorProfile({ mobileOpen, handleDrawerToggle }) {
                     sx={{
                       position: "absolute",
                       top: "50%",
-                      left: "20%",
+                      left: {
+                        xl: "20%",
+                        lg: "25%",
+                        xs: "30%",
+                        sm: "35%",
+                        md: "40%",
+                      },
                       transform: "translate(-50%, -50%)",
                       zIndex: 1,
                     }}
