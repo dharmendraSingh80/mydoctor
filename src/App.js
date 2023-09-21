@@ -19,6 +19,7 @@ import BookAppointment from "./components/BookAppointment";
 import DoctorProfile from "./components/DoctorProfile";
 import Qualifications from "./components/Qualifications";
 import ExperienceDocotr from "./components/ExperienceDoctor";
+import Dashboard from "./components/Dashboard";
 
 function App() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -204,6 +205,18 @@ function App() {
               element={
                 <ProtectedRoute userData={{ userData }}>
                   <ExperienceDocotr
+                    mobileOpen={mobileOpen}
+                    handleDrawerToggle={handleDrawerToggle}
+                    dataSpeciality={info.speciality}
+                  />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/doctor-dashboard"
+              element={
+                <ProtectedRoute userData={{ userData }}>
+                  <Dashboard
                     mobileOpen={mobileOpen}
                     handleDrawerToggle={handleDrawerToggle}
                     dataSpeciality={info.speciality}

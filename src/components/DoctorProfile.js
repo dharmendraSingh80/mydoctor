@@ -48,7 +48,7 @@ export default function DoctorProfile({ mobileOpen, handleDrawerToggle }) {
     consultationFee: /^(?!0\d{1,3}$)[1-4]?\d{1,3}$|5000/,
     contactNumber: /^[0-9]{10}$/,
     email: /\S+@\S+\.\S+/,
-    bio: /^(?=.*[^\d])[\w\s]*$/,
+    bio: /^(?=.*[A-Za-z])[\w\s.,!?'"()&$#@%*+-/:;<=>[\]^_`{|}~]*$/,
   };
 
   const validationMessages = {
@@ -80,13 +80,15 @@ export default function DoctorProfile({ mobileOpen, handleDrawerToggle }) {
     const userDetails = {
       firstName: userName[0],
       gender: editData.gender,
-      lastName: userName[1],
       profile: {
         bio: editData.bio,
-        consultationFee: editData.consultationFee,
+        consultationFee: +editData.consultationFee,
         languages: editData.languages,
       },
     };
+    if (userName[1]) {
+      userDetails.lastName = userName[1];
+    }
 
     try {
       const response = await updateDoctorData(userDetails);
@@ -148,7 +150,7 @@ export default function DoctorProfile({ mobileOpen, handleDrawerToggle }) {
             contactNumber: doc.contactNumber || "",
             gender: doc.gender || "",
             consultationFee: doc.profile?.consultationFee || "N/a",
-            languages: doc.profile?.languages || "N/a",
+            languages: doc.profile?.languages || [],
             bio: doc.profile?.bio || "N/a",
           };
           // Set the default values into the state

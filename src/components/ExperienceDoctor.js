@@ -38,7 +38,7 @@ export default function ExperienceDocotr({
   const fetchData = async () => {
     try {
       const doctor = await getDocotor();
-      console.log(doctor);
+      // console.log(doctor);
 
       setDoctorProfileData((prev) => ({
         ...prev,
@@ -67,7 +67,13 @@ export default function ExperienceDocotr({
     if (editData.length === 0) {
       setEditData([{}]);
     }
-    setEditing(!editing);
+    setEditing(true);
+  };
+  const handleCancelClick = () => {
+    if (Object.keys(editData[0]).length === 0) {
+      setEditData([]);
+    }
+    setEditing(false);
   };
 
   const validationPatterns = {
@@ -162,7 +168,6 @@ export default function ExperienceDocotr({
         fromYear: year,
         fromMonth: month,
       };
-      setEditData(updatedData);
     } else {
       updatedData[index] = {
         ...updatedData[index],
@@ -170,6 +175,7 @@ export default function ExperienceDocotr({
         toMonth: month,
       };
     }
+    setEditData(updatedData);
   };
 
   const handleSaveClick = async () => {
@@ -177,7 +183,9 @@ export default function ExperienceDocotr({
     const userDetails = {
       profile: {
         licenceNumber: doctorProfileData.licenceNumber,
-        specialities: doctorProfileData.specialities.map((item) => item._id),
+        specialities: doctorProfileData.specialities
+          .map((item) => item._id)
+          .filter((id) => id !== null),
         experience: editData,
       },
     };
@@ -239,7 +247,7 @@ export default function ExperienceDocotr({
                       <Button
                         sx={{ height: "40px", mr: "10px" }}
                         variant="contained"
-                        onClick={handleEditClick}
+                        onClick={handleCancelClick}
                       >
                         CANCEL
                       </Button>
