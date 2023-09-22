@@ -299,3 +299,17 @@ export async function getDoctorImage() {
   response = await response.json();
   return response;
 }
+
+export async function addSlots(data) {
+  data.doctorId = userData.user._id;
+  let response = await fetch(`${process.env.REACT_APP_BASE_URL}/slots`, {
+    method: "Post",
+    headers: {
+      Authorization: `Bearer ${userData.accessToken}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+  response = await response.json();
+  return response;
+}

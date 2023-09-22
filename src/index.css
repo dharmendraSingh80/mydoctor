@@ -12,3 +12,14 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.react-calendar__tile {
+  font-size: 1.1rem;
+  /* Adjust the desired font size */
+}
+
+/* Increase font size of day labels */
+.react-calendar__navigation__label {
+  font-size: 1.1rem;
+  /* Adjust the desired font size */
+}
