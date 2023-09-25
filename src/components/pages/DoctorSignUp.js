@@ -229,12 +229,14 @@ const DoctorSignUpForm = () => {
     const userName = formData.fullName.split(" ");
     const doctorDetails = {
       firstName: userName[0],
-      lastName: userName[1],
       gender: formData.gender,
       email: formData.email,
       password: formData.password,
       contactNumber: formData.contactNumber,
     };
+    if (userName[1]) {
+      doctorDetails.lastName = userName[1];
+    }
     const response = await signUpDoctor(doctorDetails);
     if (response.enabled) {
       setAlert(<Alert severity="success">Signed up successfully!</Alert>);

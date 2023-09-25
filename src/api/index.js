@@ -237,6 +237,7 @@ export async function getDocotor() {
       method: "GET",
       headers: {
         Authorization: `Bearer ${userData.accessToken}`,
+        "Content-Type": "application/json",
       },
     }
   );
@@ -310,6 +311,18 @@ export async function addSlots(data) {
     },
     body: JSON.stringify(data),
   });
+  response = await response.json();
+  return response;
+}
+
+export async function forgetPassword(data) {
+  let response = await fetch(
+    `${process.env.REACT_APP_BASE_URL}/authManagement`,
+    {
+      method: "POST",
+      body: JSON.stringify(data),
+    }
+  );
   response = await response.json();
   return response;
 }

@@ -93,7 +93,7 @@ function LoginForm() {
             >
               LOGIN
             </Button>
-            <Link to="/">Forget password</Link>
+            <Link to="/forgot">Forget password</Link>
           </Box>
           <p>
             Don't have an account <Link to="/auth/signup">Sign up</Link>

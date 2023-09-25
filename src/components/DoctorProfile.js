@@ -21,7 +21,12 @@ import {
 } from "../api";
 import { useNavigate } from "react-router-dom";
 
-export default function DoctorProfile({ mobileOpen, handleDrawerToggle }) {
+export default function DoctorProfile({
+  mobileOpen,
+  handleDrawerToggle,
+  selectedImage,
+  setSelectedImage,
+}) {
   const [editData, setEditData] = useState({
     fullName: "",
     consultationFee: "",
@@ -39,7 +44,7 @@ export default function DoctorProfile({ mobileOpen, handleDrawerToggle }) {
     bio: "",
   });
   const [editing, setEditing] = useState(false);
-  const [selectedImage, setSelectedImage] = useState(null);
+
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -94,10 +99,17 @@ export default function DoctorProfile({ mobileOpen, handleDrawerToggle }) {
       const response = await updateDoctorData(userDetails);
       if (response.enabled) {
         console.log("Doctor updated successfully");
+        setEditData({
+          ...editData,
+          fullName: userDetails.firstName + " " + userDetails.lastName || "",
+          gender: userDetails.gender,
+          bio: userDetails.profile.bio,
+          consultationFee: userDetails.profile.consultationFee.toString(),
+          languages: userDetails.profile.languages,
+        });
       } else {
         console.log("Unable to update");
       }
-      fetchDoctor();
     } catch (error) {
       console.error("Error updating patient data:", error);
     }
@@ -139,47 +151,53 @@ export default function DoctorProfile({ mobileOpen, handleDrawerToggle }) {
     }
   };
 
-  function fetchDoctor() {
-    getDocotor()
-      .then((doc) => {
-        if (doc.email) {
-          const defaultEditData = {
-            ...editData,
-            fullName: `${doc.firstName || ""} ${doc.lastName || ""}`,
-            email: doc.email || "",
-            contactNumber: doc.contactNumber || "",
-            gender: doc.gender || "",
-            consultationFee: doc.profile?.consultationFee || "N/a",
-            languages: doc.profile?.languages || [],
-            bio: doc.profile?.bio || "N/a",
-          };
-          // Set the default values into the state
-          setEditData(defaultEditData);
-        }
-      })
-      .catch((error) => {
-        console.error("Error fetching patient data:", error);
-      });
-  }
-
   useEffect(() => {
+    let isMounted = true;
     const fetchData = async () => {
       try {
-        const data = await getDoctorImage();
-        if (data.name === "NotAuthenticated") {
-          // localStorage.removeItem("userContext");
+        const [imageData, doctorData] = await Promise.all([
+          getDoctorImage(),
+          getDocotor(),
+        ]);
+
+        if (imageData.name === "NotAuthenticated") {
           navigate("/auth/login");
+          return;
         }
-        setSelectedImage(data.avatar.buffer);
+
+        if (isMounted) {
+          setSelectedImage(imageData.avatar.buffer);
+
+          if (doctorData.email) {
+            const defaultEditData = {
+              ...editData,
+              fullName: `${doctorData.firstName || ""} ${
+                doctorData.lastName || ""
+              }`,
+              email: doctorData.email || "example@gmail.com",
+              contactNumber: doctorData.contactNumber || "",
+              gender: doctorData.gender || "",
+              consultationFee: doctorData.profile?.consultationFee || "0",
+              languages: doctorData.profile?.languages || [],
+              bio: doctorData.profile?.bio || "Self",
+            };
+            setEditData(defaultEditData);
+          }
+        }
       } catch (error) {
-        console.error("Error fetching patient image:", error);
+        console.error("Error fetching data:", error);
       } finally {
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
 
     fetchData();
-    fetchDoctor();
+
+    return () => {
+      isMounted = false;
+    };
   }, [selectedImage]);
 
   return (
@@ -295,6 +313,7 @@ export default function DoctorProfile({ mobileOpen, handleDrawerToggle }) {
                   label="Name"
                   error={editErrors.fullName}
                   name="fullName"
+                  defaultValue="Dr xyz"
                   value={editData.fullName}
                   onChange={inputHandleChange}
                   onBlur={validateInput}
@@ -310,6 +329,7 @@ export default function DoctorProfile({ mobileOpen, handleDrawerToggle }) {
                   label="Consultation Fee"
                   error={editErrors.consultationFee}
                   name="consultationFee"
+                  defaultValue="0"
                   value={editData.consultationFee}
                   onChange={inputHandleChange}
                   onBlur={validateInput}
@@ -372,6 +392,7 @@ export default function DoctorProfile({ mobileOpen, handleDrawerToggle }) {
                   label="Email"
                   error={editErrors.email}
                   name="email"
+                  defaultValue="example@gmail.com"
                   value={editData.email}
                   onChange={inputHandleChange}
                   onBlur={validateInput}
@@ -417,9 +438,9 @@ export default function DoctorProfile({ mobileOpen, handleDrawerToggle }) {
                   multiline
                   rows={4}
                   variant="outlined"
-                  defaultValue="Self"
                   error={editErrors.bio}
                   name="bio"
+                  defaultValue="self"
                   value={editData.bio}
                   onChange={inputHandleChange}
                   onBlur={validateInput}

@@ -15,7 +15,6 @@ import { styled } from "@mui/material/styles";
 import { Link, useLocation } from "react-router-dom";
 import EventNoteIcon from "@mui/icons-material/EventNote";
 import NestedDrawer from "./NestedDrawer";
-import NestedDrawerDoctor from "./NestedDrawerDoctor";
 
 const drawerWidth = 255;
 const DrawerHeader = styled("div")(({ theme }) => ({
@@ -156,12 +155,7 @@ function ResponsiveDrawer(props) {
                     />
                   </ListItemButton>
                 </ListItem>
-                {isNestedDrawerOpen &&
-                  (userData?.user?.role === "doctor" ? (
-                    <NestedDrawerDoctor />
-                  ) : (
-                    <NestedDrawer />
-                  ))}
+                {isNestedDrawerOpen && <NestedDrawer />}
               </>
             )}
           </>

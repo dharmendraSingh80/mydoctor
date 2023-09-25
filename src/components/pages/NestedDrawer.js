@@ -11,15 +11,37 @@ import HttpsOutlinedIcon from "@mui/icons-material/HttpsOutlined";
 
 export default function NestedDrawer() {
   const [selectedItem, setSelectedItem] = React.useState(null);
+  const userData = JSON.parse(localStorage.getItem("userContext") || "null");
   const location = useLocation();
-  const menuItems = [
-    { text: "My Profile", icon: <AccountCircleIcon />, link: "/myprofile" },
-    {
-      text: "Change Password",
-      icon: <HttpsOutlinedIcon />,
-      link: "/changepassword",
-    },
-  ];
+  let menuItems = [];
+  if (userData?.user?.role === "doctor") {
+    menuItems = [
+      {
+        text: "Personal Information",
+        icon: <AccountCircleIcon />,
+        link: "/doctor-profile",
+      },
+      {
+        text: "Qualifications",
+        icon: <HttpsOutlinedIcon />,
+        link: "/doctor-profile/qualification",
+      },
+      {
+        text: "Experience",
+        icon: <HttpsOutlinedIcon />,
+        link: "/doctor-profile/experience",
+      },
+    ];
+  } else {
+    menuItems = [
+      { text: "My Profile", icon: <AccountCircleIcon />, link: "/myprofile" },
+      {
+        text: "Change Password",
+        icon: <HttpsOutlinedIcon />,
+        link: "/changepassword",
+      },
+    ];
+  }
   const handleItemClick = (index) => {
     setSelectedItem(index);
   };

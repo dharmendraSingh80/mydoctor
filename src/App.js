@@ -20,6 +20,7 @@ import DoctorProfile from "./components/DoctorProfile";
 import Qualifications from "./components/Qualifications";
 import ExperienceDocotr from "./components/ExperienceDoctor";
 import Dashboard from "./components/Dashboard";
+import ForgetPassword from "./components/ForgetPassword";
 
 function App() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -34,6 +35,7 @@ function App() {
 
   const [appointment, setAppointment] = useState("");
   const [appointmentAlert, setAppointmentAlert] = useState(null);
+  const [selectedImage, setSelectedImage] = useState(null);
 
   let userData = JSON.parse(localStorage.getItem("userContext") || "null");
 
@@ -91,6 +93,7 @@ function App() {
         <Navbar
           handleDrawerToggle={handleDrawerToggle}
           dataSpeciality={info.speciality}
+          selectedImage={selectedImage}
         />
         <Box sx={{ marginTop: { xs: "14rem", md: "9rem" } }}>
           <Routes>
@@ -107,6 +110,7 @@ function App() {
                 />
               }
             />
+            <Route path="/forgot" element={<ForgetPassword />} />
             <Route
               path="/search"
               element={
@@ -135,6 +139,8 @@ function App() {
                   <PatientProfile
                     mobileOpen={mobileOpen}
                     handleDrawerToggle={handleDrawerToggle}
+                    selectedImage={selectedImage}
+                    setSelectedImage={setSelectedImage}
                   />
                 </ProtectedRoute>
               }
@@ -184,6 +190,8 @@ function App() {
                   <DoctorProfile
                     mobileOpen={mobileOpen}
                     handleDrawerToggle={handleDrawerToggle}
+                    selectedImage={selectedImage}
+                    setSelectedImage={setSelectedImage}
                   />
                 </ProtectedRoute>
               }

@@ -70,7 +70,7 @@ export default function ExperienceDocotr({
     setEditing(true);
   };
   const handleCancelClick = () => {
-    if (Object.keys(editData[0]).length === 0) {
+    if (editData[0] && Object.keys(editData[0]).length === 0) {
       setEditData([]);
     }
     setEditing(false);
@@ -183,9 +183,7 @@ export default function ExperienceDocotr({
     const userDetails = {
       profile: {
         licenceNumber: doctorProfileData.licenceNumber,
-        specialities: doctorProfileData.specialities
-          .map((item) => item._id)
-          .filter((id) => id !== null),
+        specialities: doctorProfileData.specialities.map((item) => item._id),
         experience: editData,
       },
     };
@@ -321,9 +319,7 @@ export default function ExperienceDocotr({
                         id="tags-outlined"
                         options={dataSpeciality}
                         getOptionLabel={(option) => option?.name}
-                        value={doctorProfileData.specialities?.map((item) => ({
-                          name: item.name,
-                        }))}
+                        value={doctorProfileData.specialities}
                         filterSelectedOptions
                         onChange={handleSpecialitites}
                         disabled={!editing}

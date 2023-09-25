@@ -17,8 +17,12 @@ import EditForm from "./pages/EditForm";
 import { getPatient } from "../api";
 import dayjs from "dayjs";
 
-export default function PatientProfile({ mobileOpen, handleDrawerToggle }) {
-  const [selectedImage, setSelectedImage] = useState(null);
+export default function PatientProfile({
+  mobileOpen,
+  handleDrawerToggle,
+  selectedImage,
+  setSelectedImage,
+}) {
   const [editing, setEditing] = useState(false);
   const [loading, setLoading] = useState(true);
   const [editData, setEditData] = useState({
@@ -116,11 +120,28 @@ export default function PatientProfile({ mobileOpen, handleDrawerToggle }) {
     try {
       const response = await updatePatientData(userDetails);
       if (response.enabled) {
-        alert("Patient updated successfully");
+        const defaultEditData = {
+          ...editData,
+          fullName: `${userDetails.firstName || ""} ${
+            userDetails.lastName || ""
+          }`,
+          gender: userDetails.gender || "",
+          dob: userDetails?.profile?.dob
+            ? dayjs(userDetails?.profile?.dob).format("YYYY-MM-DD")
+            : "",
+          bloodType: userDetails?.profile?.bloodType || "N/a",
+          area: userDetails.profile?.address?.area || "N/a",
+          city: userDetails.profile?.address?.city || "N/a",
+          country: userDetails.profile?.address?.country || "N/a",
+          locality: userDetails.profile?.address?.locality || "N/a",
+          pincode: userDetails.profile?.address?.pincode || "N/a",
+          state: userDetails.profile?.address?.state || "N/a",
+        };
+        // Set the default values into the state
+        setEditData(defaultEditData);
       } else {
         console.log("Unable to update");
       }
-      fetchPatient();
     } catch (error) {
       console.error("Error updating patient data:", error);
     }
@@ -143,21 +164,49 @@ export default function PatientProfile({ mobileOpen, handleDrawerToggle }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await getPatientImage();
-        if (data.name === "NotAuthenticated") {
+        const [imageData, patientData] = await Promise.all([
+          getPatientImage(),
+          getPatient(),
+        ]);
+
+        if (imageData.name === "NotAuthenticated") {
           localStorage.removeItem("userContext");
           navigate("/auth/login");
+          return;
         }
-        setSelectedImage(data.avatar.buffer);
+
+        if (patientData.email) {
+          const defaultEditData = {
+            ...editData,
+            fullName: `${patientData.firstName || ""} ${
+              patientData.lastName || ""
+            }`,
+            email: patientData.email || "",
+            contactNumber: patientData.contactNumber || "",
+            gender: patientData.gender || "",
+            dob: patientData.profile?.dob
+              ? dayjs(patientData.profile.dob).format("YYYY-MM-DD")
+              : "",
+            bloodType: patientData.profile?.bloodType || "N/a",
+            area: patientData.profile?.address?.area || "N/a",
+            city: patientData.profile?.address?.city || "N/a",
+            country: patientData.profile?.address?.country || "N/a",
+            locality: patientData.profile?.address?.locality || "N/a",
+            pincode: patientData.profile?.address?.pincode || "N/a",
+            state: patientData.profile?.address?.state || "N/a",
+          };
+          setEditData(defaultEditData);
+        }
+
+        setSelectedImage(imageData.avatar.buffer);
       } catch (error) {
-        console.error("Error fetching patient image:", error);
+        console.error("Error fetching data:", error);
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-    fetchPatient();
   }, [selectedImage]);
 
   const styles = {
