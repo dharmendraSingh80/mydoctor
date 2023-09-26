@@ -25,15 +25,16 @@ export default function Appointments({
   const [totalAppointments, setTotalAppointments] = useState([]);
   const [record, setRecord] = useState(10);
   const [loading, setLoading] = useState(true);
+  let userData = JSON.parse(localStorage.getItem("userContext") || "null");
 
   const handleChange = (event) => {
     setRecord(event.target.value);
   };
 
   useEffect(() => {
-    patientAppointment()
+    patientAppointment(userData?.user?._id, userData?.accessToken)
       .then((data) => {
-        setTotalAppointments(data.data);
+        setTotalAppointments(data?.data);
       })
       .finally(() => {
         setLoading(false);

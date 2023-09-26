@@ -29,6 +29,7 @@ export default function ChangePassword({ mobileOpen, handleDrawerToggle }) {
     match: false,
   });
   const [alert, setAlert] = useState(null);
+  let userData = JSON.parse(localStorage.getItem("userContext") || "null");
 
   const validatePassword = (event) => {
     const { name, value } = event.target;
@@ -63,7 +64,11 @@ export default function ChangePassword({ mobileOpen, handleDrawerToggle }) {
       newPassword: formData.newPassword,
       oldPassword: formData.currentPassword,
     };
-    const response = await updatePatientData(updatePassword);
+    const response = await updatePatientData(
+      updatePassword,
+      userData?.user?._id,
+      userData?.accessToken
+    );
     if (response.enabled) {
       setAlert(
         <Alert sx={{ width: "48%", mb: "20px" }} severity="success">

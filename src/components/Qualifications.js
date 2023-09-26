@@ -18,9 +18,10 @@ export default function Qualifications({ mobileOpen, handleDrawerToggle }) {
   const [editErrors, setEditErrors] = useState([]);
   // const [paperCount, setPaperCount] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
+  let userData = JSON.parse(localStorage.getItem("userContext") || "null");
 
   const fetchData = async () => {
-    const doctor = await getDocotor();
+    const doctor = await getDocotor(userData?.user?._id, userData?.accessToken);
     setEditData(doctor?.profile?.qualifications || []);
     setIsLoading(false);
   };
@@ -97,7 +98,11 @@ export default function Qualifications({ mobileOpen, handleDrawerToggle }) {
     };
 
     try {
-      const response = await updateDoctorData(userDetails);
+      const response = await updateDoctorData(
+        userDetails,
+        userData?.user?._id,
+        userData?.accessToken
+      );
       if (response.enabled) {
         alert("doctor qualifications updated successfully");
       } else {

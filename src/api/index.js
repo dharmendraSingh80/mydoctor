@@ -1,4 +1,3 @@
-let userData = JSON.parse(localStorage.getItem("userContext") || "null");
 export async function getSpecialities() {
   let data = await fetch(
     `${process.env.REACT_APP_BASE_URL}/specializations?$limit=100&$sort[name]=1`
@@ -128,14 +127,14 @@ export async function userLogin(data) {
   }
 }
 
-export default async function patientAppointment() {
+export default async function patientAppointment(id, accessToken) {
   try {
     let response = await fetch(
-      `${process.env.REACT_APP_BASE_URL}/appointments?patientId=${userData.user._id}`,
+      `${process.env.REACT_APP_BASE_URL}/appointments?patientId=${id}`,
       {
         method: "GET",
         headers: {
-          Authorization: `Bearer ${userData.accessToken}`,
+          Authorization: `Bearer ${accessToken}`,
         },
       }
     );
@@ -147,14 +146,14 @@ export default async function patientAppointment() {
   }
 }
 
-export async function uploadPatientImage(data) {
+export async function uploadPatientImage(data, id, accessToken) {
   try {
     let response = await fetch(
-      `${process.env.REACT_APP_BASE_URL}/patients/${userData.user._id}`,
+      `${process.env.REACT_APP_BASE_URL}/patients/${id}`,
       {
         method: "PATCH",
         headers: {
-          Authorization: `Bearer ${userData.accessToken}`,
+          Authorization: `Bearer ${accessToken}`,
         },
         body: data,
       }
@@ -167,19 +166,19 @@ export async function uploadPatientImage(data) {
   }
 }
 
-export async function getPatientImage() {
+export async function getPatientImage(id, accessToken) {
   const queryParams = new URLSearchParams({
     avatar: 1,
     "$select[]": "avatarId",
   });
   let response = await fetch(
-    `${process.env.REACT_APP_BASE_URL}/patients/${
-      userData.user._id
-    }?${queryParams.toString()}`,
+    `${
+      process.env.REACT_APP_BASE_URL
+    }/patients/${id}?${queryParams.toString()}`,
     {
       method: "GET",
       headers: {
-        Authorization: `Bearer ${userData.accessToken}`,
+        Authorization: `Bearer ${accessToken}`,
       },
     }
   );
@@ -187,13 +186,13 @@ export async function getPatientImage() {
   return response;
 }
 
-export async function getPatient() {
+export async function getPatient(id, accessToken) {
   let response = await fetch(
-    `${process.env.REACT_APP_BASE_URL}/patients/${userData.user._id}`,
+    `${process.env.REACT_APP_BASE_URL}/patients/${id}`,
     {
       method: "GET",
       headers: {
-        Authorization: `Bearer ${userData.accessToken}`,
+        Authorization: `Bearer ${accessToken}`,
       },
     }
   );
@@ -201,13 +200,13 @@ export async function getPatient() {
   return response;
 }
 
-export async function updatePatientData(data) {
+export async function updatePatientData(data, id, accessToken) {
   let response = await fetch(
-    `${process.env.REACT_APP_BASE_URL}/patients/${userData.user._id}`,
+    `${process.env.REACT_APP_BASE_URL}/patients/${id}`,
     {
       method: "PATCH",
       headers: {
-        Authorization: `Bearer ${userData.accessToken}`,
+        Authorization: `Bearer ${accessToken}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify(data),
@@ -217,11 +216,11 @@ export async function updatePatientData(data) {
   return response;
 }
 
-export async function makePayment(data) {
+export async function makePayment(data, accessToken) {
   let response = await fetch(`${process.env.REACT_APP_BASE_URL}/payments`, {
     method: "POST",
     headers: {
-      Authorization: `Bearer ${userData.accessToken}`,
+      Authorization: `Bearer ${accessToken}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify(data),
@@ -230,13 +229,13 @@ export async function makePayment(data) {
   return response;
 }
 
-export async function getDocotor() {
+export async function getDocotor(id, accessToken) {
   let response = await fetch(
-    `${process.env.REACT_APP_BASE_URL}/doctors/${userData.user._id}`,
+    `${process.env.REACT_APP_BASE_URL}/doctors/${id}`,
     {
       method: "GET",
       headers: {
-        Authorization: `Bearer ${userData.accessToken}`,
+        Authorization: `Bearer ${accessToken}`,
         "Content-Type": "application/json",
       },
     }
@@ -245,13 +244,13 @@ export async function getDocotor() {
   return response;
 }
 
-export async function updateDoctorData(data) {
+export async function updateDoctorData(data, id, accessToken) {
   let response = await fetch(
-    `${process.env.REACT_APP_BASE_URL}/doctors/${userData.user._id}`,
+    `${process.env.REACT_APP_BASE_URL}/doctors/${id}`,
     {
       method: "PATCH",
       headers: {
-        Authorization: `Bearer ${userData.accessToken}`,
+        Authorization: `Bearer ${accessToken}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify(data),
@@ -261,14 +260,14 @@ export async function updateDoctorData(data) {
   return response;
 }
 
-export async function uploadDoctorImage(data) {
+export async function uploadDoctorImage(data, id, accessToken) {
   try {
     let response = await fetch(
-      `${process.env.REACT_APP_BASE_URL}/doctors/${userData.user._id}`,
+      `${process.env.REACT_APP_BASE_URL}/doctors/${id}`,
       {
         method: "PATCH",
         headers: {
-          Authorization: `Bearer ${userData.accessToken}`,
+          Authorization: `Bearer ${accessToken}`,
         },
         body: data,
       }
@@ -281,32 +280,38 @@ export async function uploadDoctorImage(data) {
   }
 }
 
-export async function getDoctorImage() {
+export async function getDoctorImage(id, accessToken) {
   const queryParams = new URLSearchParams({
     avatar: 1,
     "$select[]": "avatarId",
   });
-  let response = await fetch(
-    `${process.env.REACT_APP_BASE_URL}/doctors/${
-      userData.user._id
-    }?${queryParams.toString()}`,
-    {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${userData.accessToken}`,
-      },
-    }
-  );
-  response = await response.json();
-  return response;
+
+  try {
+    const response = await fetch(
+      `${
+        process.env.REACT_APP_BASE_URL
+      }/doctors/${id}?${queryParams.toString()}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching doctor image:", error);
+    throw error;
+  }
 }
 
-export async function addSlots(data) {
-  data.doctorId = userData.user._id;
+export async function addSlots(data, accessToken) {
   let response = await fetch(`${process.env.REACT_APP_BASE_URL}/slots`, {
     method: "Post",
     headers: {
-      Authorization: `Bearer ${userData.accessToken}`,
+      Authorization: `Bearer ${accessToken}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify(data),
@@ -320,6 +325,7 @@ export async function forgetPassword(data) {
     `${process.env.REACT_APP_BASE_URL}/authManagement`,
     {
       method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     }
   );

@@ -36,7 +36,6 @@ function App() {
   const [appointment, setAppointment] = useState("");
   const [appointmentAlert, setAppointmentAlert] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
-
   let userData = JSON.parse(localStorage.getItem("userContext") || "null");
 
   const handleDrawerToggle = () => {

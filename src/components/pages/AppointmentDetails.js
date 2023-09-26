@@ -1,29 +1,7 @@
 import { Box, Divider, Grid, Typography } from "@mui/material";
+import dayjs from "dayjs";
 
 export default function AppointmentDetails({ appointment, userData }) {
-  const getTimeSlots = (startTime, endTime) => {
-    // Parse the startTime and endTime as Date objects
-    const parsedStartTime = new Date(startTime);
-    const parsedEndTime = new Date(endTime);
-
-    // Check if parsing was successful
-    if (isNaN(parsedStartTime) || isNaN(parsedEndTime)) {
-      return "Invalid date format";
-    }
-
-    const formattedStartTime = parsedStartTime.toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: true,
-    });
-    const formattedEndTime = parsedEndTime.toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: true,
-    });
-
-    return `${formattedStartTime} - ${formattedEndTime}`;
-  };
   return (
     <Box
       sx={{
@@ -85,12 +63,7 @@ export default function AppointmentDetails({ appointment, userData }) {
         </Grid>
         <Grid item xs={6}>
           <Typography sx={{ fontSize: "1.1rem" }}>
-            {new Date(appointment?.startTime).toLocaleDateString("en-US", {
-              weekday: "long",
-              day: "numeric",
-              month: "short",
-              year: "numeric",
-            })}
+            {dayjs(appointment?.startTime).format("dddd, MMM DD, YYYY")}
           </Typography>
         </Grid>
       </Grid>
@@ -101,7 +74,9 @@ export default function AppointmentDetails({ appointment, userData }) {
         </Grid>
         <Grid item xs={6}>
           <Typography sx={{ fontSize: "1.1rem" }}>
-            {getTimeSlots(appointment?.startTime, appointment?.endTime)}
+            {`${dayjs(appointment?.startTime).format("hh:mm a")} - ${dayjs(
+              appointment?.endTime
+            ).format("hh:mm a")}`}
           </Typography>
         </Grid>
       </Grid>

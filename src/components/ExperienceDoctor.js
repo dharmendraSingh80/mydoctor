@@ -30,6 +30,7 @@ export default function ExperienceDocotr({
   const [licenceErrors, setLicenceErrors] = useState(null);
 
   const [alert, setAlert] = useState(null);
+  let userData = JSON.parse(localStorage.getItem("userContext") || "null");
 
   const addMorePaper = () => {
     setEditData([...editData, {}]);
@@ -37,7 +38,10 @@ export default function ExperienceDocotr({
 
   const fetchData = async () => {
     try {
-      const doctor = await getDocotor();
+      const doctor = await getDocotor(
+        userData?.user?._id,
+        userData?.accessToken
+      );
       // console.log(doctor);
 
       setDoctorProfileData((prev) => ({
@@ -189,7 +193,11 @@ export default function ExperienceDocotr({
     };
 
     try {
-      const response = await updateDoctorData(userDetails);
+      const response = await updateDoctorData(
+        userDetails,
+        userData?.user?._id,
+        userData?.accessToken
+      );
       if (response.enabled) {
         console.log("doctor experience updated successfully");
       } else {

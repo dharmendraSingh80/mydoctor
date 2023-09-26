@@ -92,7 +92,7 @@ export default function BookAppointment({
       expiryDate: `${paymentData.month}-${paymentData.year}`,
       slotId: appointment._id,
     };
-    const response = await makePayment(paymentDetails);
+    const response = await makePayment(paymentDetails, userData?.accessToken);
     if (response.code !== 427) {
       setAppointmentAlert(
         <Alert severity="success">Appointment booking successfull!</Alert>

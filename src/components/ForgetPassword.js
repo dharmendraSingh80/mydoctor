@@ -1,4 +1,5 @@
 import {
+  Alert,
   Avatar,
   Box,
   Button,
@@ -8,13 +9,64 @@ import {
 } from "@mui/material";
 import fogetPassword from "../assets/images/forgotPassword.svg";
 import { useState } from "react";
+import { forgetPassword } from "../api";
 
 export default function ForgetPassword() {
-  const [email, setEmail] = useState();
+  const [email, setEmail] = useState("");
+  const [alert, setAlert] = useState(null);
+  const [success, setSuccess] = useState(false);
+  const [emailError, setEmailError] = useState("");
+
+  const handleChange = (e) => {
+    setEmail(e.target.value);
+  };
+
+  const handleSubmit = async () => {
+    const data = {
+      action: "sendResetPwd",
+      value: {
+        email: email,
+      },
+    };
+    try {
+      const res = await forgetPassword(data);
+      if (res.errors) {
+        setAlert(
+          <Alert
+            severity="error"
+            sx={{
+              width: { xs: "80%", md: "85%", lg: "90%" },
+            }}
+          >
+            Unable to reset password. Please try again
+          </Alert>
+        );
+      } else {
+        setSuccess(true);
+      }
+    } catch (error) {
+      console.log("Some error in forget password", error);
+    }
+  };
+
+  const validateInput = (e) => {
+    const value = e.target.value;
+    if (!value || !/\S+@\S+\.\S+/.test(value)) {
+      setEmailError("Please enter a valid email address");
+    } else {
+      setEmailError("");
+    }
+  };
 
   return (
     <Box
-      sx={{ display: "flex", flexFlow: "row nowrap", flexGrow: 1, mt: "115px" }}
+      sx={{
+        display: "flex",
+        flexFlow: "row nowrap",
+        flexGrow: 1,
+        mt: "115px",
+        minHeight: "68vh",
+      }}
     >
       <Box
         component="main"
@@ -46,12 +98,13 @@ export default function ForgetPassword() {
           <Grid
             item
             sx={{
-              mt: { lg: "8%", xs: "28%", md: "inherit" },
+              mt: { lg: "8%", xs: "10%", md: "inherit" },
               ml: { lg: "-15%", xs: "0%", md: "inherit" },
             }}
             lg={3}
             md={8}
             sm={10}
+            xs={12}
           >
             <Box
               sx={{
@@ -63,7 +116,8 @@ export default function ForgetPassword() {
                 mb: { md: "4%" },
               }}
             >
-              <Box sx={{ mb: "50px", ml: "5%", width: "100%" }}>
+              <Box sx={{ mb: "50px", ml: "5%", width: "100%", mt: "10%" }}>
+                {alert}
                 <div>
                   <Typography
                     sx={{
@@ -75,29 +129,52 @@ export default function ForgetPassword() {
                   >
                     Forgot Password
                   </Typography>
-                  <Typography variant="subtitle1" sx={{ mb: "20px" }}>
+                  <Typography
+                    variant="subtitle1"
+                    sx={{ mb: "20px", width: { xs: "90%", lg: "100%" } }}
+                  >
                     Send a link to your email to reset your password
                   </Typography>
                 </div>
-                <Box component="form">
-                  <TextField
+
+                {success ? (
+                  <Alert
+                    severity="success"
                     sx={{
-                      width: { xs: "90%", lg: "100%" },
-                      mb: "20px",
-                    }}
-                    label="Email"
-                    id="outlined-required"
-                    required
-                  />
-                  <Button
-                    variant="contained"
-                    sx={{
-                      width: { xs: "90%", lg: "100%" },
+                      width: { xs: "80%", md: "85%", lg: "90%" },
                     }}
                   >
-                    SEND RESET LINK
-                  </Button>
-                </Box>
+                    We have sent password reset link to {email}
+                  </Alert>
+                ) : (
+                  <Box component="form">
+                    <TextField
+                      sx={{
+                        width: { xs: "90%", lg: "100%" },
+                        mb: "20px",
+                      }}
+                      label="Email"
+                      id="outlined-required"
+                      name="email"
+                      error={emailError}
+                      helperText={emailError || ""}
+                      onBlur={validateInput}
+                      onChange={handleChange}
+                      required
+                    />
+                    <Button
+                      variant="contained"
+                      sx={{
+                        width: { xs: "90%", lg: "100%" },
+                        height: "40px",
+                      }}
+                      onClick={handleSubmit}
+                      disabled={!email || emailError}
+                    >
+                      SEND RESET LINK
+                    </Button>
+                  </Box>
+                )}
               </Box>
             </Box>
           </Grid>

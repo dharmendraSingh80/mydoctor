@@ -41,6 +41,7 @@ export default function PatientProfile({
   });
 
   const navigate = useNavigate();
+  let userData = JSON.parse(localStorage.getItem("userContext") || "null");
 
   function fetchPatient() {
     getPatient()
@@ -79,7 +80,11 @@ export default function PatientProfile({
       formData.append("avatar", selectedFile);
       setLoading(true);
       try {
-        const data = await uploadPatientImage(formData);
+        const data = await uploadPatientImage(
+          formData,
+          userData?.user?._id,
+          userData?.accessToken
+        );
         const reader = new FileReader();
         reader.onload = (e) => {
           setSelectedImage(e.target.result);
@@ -118,7 +123,11 @@ export default function PatientProfile({
     };
 
     try {
-      const response = await updatePatientData(userDetails);
+      const response = await updatePatientData(
+        userDetails,
+        userData?.user?._id,
+        userData?.accessToken
+      );
       if (response.enabled) {
         const defaultEditData = {
           ...editData,
@@ -165,8 +174,8 @@ export default function PatientProfile({
     const fetchData = async () => {
       try {
         const [imageData, patientData] = await Promise.all([
-          getPatientImage(),
-          getPatient(),
+          getPatientImage(userData?.user?._id, userData?.accessToken),
+          getPatient(userData?.user?._id, userData?.accessToken),
         ]);
 
         if (imageData.name === "NotAuthenticated") {

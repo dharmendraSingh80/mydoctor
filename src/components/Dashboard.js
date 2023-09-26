@@ -27,6 +27,7 @@ export default function DashBoard({ mobileOpen, handleDrawerToggle }) {
   });
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 
+  let userData = JSON.parse(localStorage.getItem("userContext") || "null");
   const handleCreateSlot = async () => {
     const parsedDate = new Date(appointmentTime.date);
     const year = parsedDate.getFullYear();
@@ -46,9 +47,14 @@ export default function DashBoard({ mobileOpen, handleDrawerToggle }) {
       size: +appointmentTime.size,
       endTime: endDate.toISOString(),
       startTime: startDate.toISOString(),
+      doctorId: userData?.user?._id,
     };
 
-    const response = await addSlots(slotsDetails);
+    const response = await addSlots(
+      slotsDetails,
+
+      userData?.accessToken
+    );
     console.log(response);
   };
 

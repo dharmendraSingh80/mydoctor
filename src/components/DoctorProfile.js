@@ -47,6 +47,7 @@ export default function DoctorProfile({
 
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  let userData = JSON.parse(localStorage.getItem("userContext") || "null");
 
   const validationPatterns = {
     fullName: /^$|^[^0-9].*$/,
@@ -96,7 +97,11 @@ export default function DoctorProfile({
     }
 
     try {
-      const response = await updateDoctorData(userDetails);
+      const response = await updateDoctorData(
+        userDetails,
+        userData?.user?._id,
+        userData?.accessToken
+      );
       if (response.enabled) {
         console.log("Doctor updated successfully");
         setEditData({
@@ -137,7 +142,11 @@ export default function DoctorProfile({
       formData.append("avatar", selectedFile);
       setLoading(true);
       try {
-        const data = await uploadDoctorImage(formData);
+        const data = await uploadDoctorImage(
+          formData,
+          userData?.user?._id,
+          userData?.accessToken
+        );
         const reader = new FileReader();
         reader.onload = (e) => {
           setSelectedImage(e.target.result);
@@ -151,13 +160,13 @@ export default function DoctorProfile({
     }
   };
 
+  // Inside your DoctorProfile component
   useEffect(() => {
-    let isMounted = true;
     const fetchData = async () => {
       try {
         const [imageData, doctorData] = await Promise.all([
-          getDoctorImage(),
-          getDocotor(),
+          getDoctorImage(userData?.user?._id, userData?.accessToken),
+          getDocotor(userData?.user?._id, userData?.accessToken),
         ]);
 
         if (imageData.name === "NotAuthenticated") {
@@ -165,40 +174,32 @@ export default function DoctorProfile({
           return;
         }
 
-        if (isMounted) {
-          setSelectedImage(imageData.avatar.buffer);
+        setSelectedImage(imageData.avatar.buffer);
 
-          if (doctorData.email) {
-            const defaultEditData = {
-              ...editData,
-              fullName: `${doctorData.firstName || ""} ${
-                doctorData.lastName || ""
-              }`,
-              email: doctorData.email || "example@gmail.com",
-              contactNumber: doctorData.contactNumber || "",
-              gender: doctorData.gender || "",
-              consultationFee: doctorData.profile?.consultationFee || "0",
-              languages: doctorData.profile?.languages || [],
-              bio: doctorData.profile?.bio || "Self",
-            };
-            setEditData(defaultEditData);
-          }
+        if (doctorData.email) {
+          const defaultEditData = {
+            ...editData,
+            fullName: `${doctorData.firstName || ""} ${
+              doctorData.lastName || ""
+            }`,
+            email: doctorData.email || "example@gmail.com",
+            contactNumber: doctorData.contactNumber || "",
+            gender: doctorData.gender || "",
+            consultationFee: doctorData.profile?.consultationFee || "0",
+            languages: doctorData.profile?.languages || [],
+            bio: doctorData.profile?.bio || "Self",
+          };
+          setEditData(defaultEditData);
         }
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
-        if (isMounted) {
-          setLoading(false);
-        }
+        setLoading(false);
       }
     };
 
-    fetchData();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [selectedImage]);
+    fetchData(); // Trigger the initial API fetch when the component mounts
+  }, []); // Empty dependency array to run this effect only once on mount
 
   return (
     <Box

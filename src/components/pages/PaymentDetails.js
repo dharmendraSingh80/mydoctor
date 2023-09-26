@@ -6,7 +6,6 @@ import unionpayIcon from "../../myIcon/unionpay.svg";
 import americanExpressIcon from "../../myIcon/american_express.svg";
 import masterCardIcon from "../../myIcon/master_card.svg";
 import jcbIcon from "../../myIcon/jcb.svg";
-import { useState } from "react";
 
 export default function PaymentDetails({
   paymentData,

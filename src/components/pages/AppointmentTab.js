@@ -6,6 +6,7 @@ import Paper from "@mui/material/Paper";
 import { TabContext, TabPanel } from "@mui/lab";
 import { Button, Chip, Typography } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
+import dayjs from "dayjs";
 
 export default function AppointmentTab({ slots, setAppointment }) {
   const [value, setValue] = React.useState(0);
@@ -18,36 +19,6 @@ export default function AppointmentTab({ slots, setAppointment }) {
   };
 
   let userData = JSON.parse(localStorage.getItem("userContext") || "null");
-
-  // Function to format the date
-  const formatDate = (dateString) => {
-    const options = { year: "numeric", month: "short", day: "numeric" };
-    return new Date(dateString).toLocaleDateString(undefined, options);
-  };
-
-  const getTimeSlots = (startTime, endTime) => {
-    // Parse the startTime and endTime as Date objects
-    const parsedStartTime = new Date(startTime);
-    const parsedEndTime = new Date(endTime);
-
-    // Check if parsing was successful
-    if (isNaN(parsedStartTime) || isNaN(parsedEndTime)) {
-      return "Invalid date format";
-    }
-
-    const formattedStartTime = parsedStartTime.toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: true,
-    });
-    const formattedEndTime = parsedEndTime.toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: true,
-    });
-
-    return `${formattedStartTime} - ${formattedEndTime}`;
-  };
 
   const handleSlots = (slot) => {
     if (userData) {
@@ -91,7 +62,11 @@ export default function AppointmentTab({ slots, setAppointment }) {
           centered
         >
           {slots.map((slot, index) => (
-            <Tab key={index} value={index} label={formatDate(slot.startTime)} />
+            <Tab
+              key={index}
+              value={index}
+              label={dayjs(slot.startTime).format("MMM DD, YYYY")}
+            />
           ))}
         </Tabs>
       </Box>
@@ -101,7 +76,9 @@ export default function AppointmentTab({ slots, setAppointment }) {
             <Paper elevation={0}>
               <TabPanel key={index} value={index}>
                 <Chip
-                  label={getTimeSlots(item.startTime, item.endTime)}
+                  label={`${dayjs(item.startTime).format("hh:mm a")} - ${dayjs(
+                    item.endTime
+                  ).format("hh:mm a")}`}
                   color="primary"
                   variant="outlined"
                   component={Button}
