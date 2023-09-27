@@ -6,7 +6,13 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-export default function PatientDetails({ userData, appointment }) {
+export default function PatientDetails({
+  patientDetails,
+  appointment,
+  handlePatientDetailsForm,
+  paymentErrors,
+  validateInput,
+}) {
   return (
     <Box
       sx={{
@@ -19,11 +25,12 @@ export default function PatientDetails({ userData, appointment }) {
       <span>The appointment is for:</span>
       <RadioGroup
         aria-labelledby="demo-radio-buttons-group-label"
-        defaultValue="female"
-        name="radio-buttons-group"
+        value={patientDetails.appointmentFor}
+        name="appointmentFor"
+        onChange={handlePatientDetailsForm}
       >
         <FormControlLabel
-          value="female"
+          value="mySelf"
           control={<Radio />}
           label="Myself"
           sx={{
@@ -33,7 +40,7 @@ export default function PatientDetails({ userData, appointment }) {
           }}
         />
         <FormControlLabel
-          value="male"
+          value="someoneElse"
           control={<Radio />}
           label="Someone Else"
           sx={{
@@ -62,10 +69,20 @@ export default function PatientDetails({ userData, appointment }) {
         <TextField
           id="outlined-required"
           label="Patient Name"
-          defaultValue={`${userData?.user?.firstName} ${userData?.user?.lastName}`}
-          sx={{ backgroundColor: "rgb(221, 221, 221)" }}
+          error={paymentErrors.fullName}
+          value={patientDetails.fullName || ""}
+          sx={{
+            backgroundColor:
+              patientDetails.appointmentFor === "mySelf"
+                ? "rgb(221, 221, 221)"
+                : "",
+          }}
+          onBlur={validateInput}
+          helperText={paymentErrors.fullName || ""}
           fullWidth
-          disabled
+          name="fullName"
+          onChange={handlePatientDetailsForm}
+          disabled={patientDetails.appointmentFor === "mySelf"}
         />
         <br />
         <br />
@@ -73,10 +90,21 @@ export default function PatientDetails({ userData, appointment }) {
         <TextField
           id="outlined-required"
           label="Patient Mobile Number"
-          defaultValue={userData?.user.contactNumber}
-          sx={{ backgroundColor: "rgb(221, 221, 221)" }}
+          name="contactNumber"
+          error={paymentErrors.contactNumber}
+          value={patientDetails.contactNumber || ""}
+          sx={{
+            backgroundColor:
+              patientDetails.appointmentFor === "mySelf"
+                ? "rgb(221, 221, 221)"
+                : "",
+          }}
+          inputProps={{ maxLength: 10 }}
+          onBlur={validateInput}
+          helperText={paymentErrors.contactNumber || ""}
           fullWidth
-          disabled
+          onChange={handlePatientDetailsForm}
+          disabled={patientDetails.appointmentFor === "mySelf"}
         />
         <br />
         <br />

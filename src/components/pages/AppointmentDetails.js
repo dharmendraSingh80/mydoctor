@@ -1,7 +1,7 @@
 import { Box, Divider, Grid, Typography } from "@mui/material";
 import dayjs from "dayjs";
 
-export default function AppointmentDetails({ appointment, userData }) {
+export default function AppointmentDetails({ appointment, patientDetails }) {
   return (
     <Box
       sx={{
@@ -17,7 +17,7 @@ export default function AppointmentDetails({ appointment, userData }) {
         </Grid>
         <Grid item xs={6}>
           <Typography sx={{ fontSize: "1.1rem" }}>
-            {userData?.user.firstName} {userData?.user.lastName}
+            {patientDetails.fullName}
           </Typography>
         </Grid>
       </Grid>
@@ -30,7 +30,7 @@ export default function AppointmentDetails({ appointment, userData }) {
         </Grid>
         <Grid item xs={6}>
           <Typography sx={{ fontSize: "1.1rem" }}>
-            {userData?.user.contactNumber}
+            {patientDetails.contactNumber}
           </Typography>
         </Grid>
       </Grid>

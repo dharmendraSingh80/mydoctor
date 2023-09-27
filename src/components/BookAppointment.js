@@ -12,6 +12,13 @@ import AppointmentDetails from "./pages/AppointmentDetails";
 import { useNavigate } from "react-router-dom";
 import PaymentDetails from "./pages/PaymentDetails";
 import { makePayment } from "../api";
+import { useState, useEffect } from "react";
+const bookAppointmentErrors = {
+  cardNumber: "",
+  cvv: "",
+  fullName: "",
+  contactNumber: "",
+};
 
 export default function BookAppointment({
   mobileOpen,
@@ -19,17 +26,20 @@ export default function BookAppointment({
   appointment,
   setAppointmentAlert,
 }) {
-  const [paymentData, setPaymentData] = React.useState({
+  const [paymentData, setPaymentData] = useState({
     cardNumber: "",
     cvv: "",
     month: "",
     year: "",
   });
-  const [activeStep, setActiveStep] = React.useState(0);
-  const [paymentErrors, setPaymentErrors] = React.useState({
-    cardNumber: "",
-    cvv: "",
+  const [activeStep, setActiveStep] = useState(0);
+  const [paymentErrors, setPaymentErrors] = useState(bookAppointmentErrors);
+  const [patientDetails, setPatientDetails] = useState({
+    fullName: "",
+    contactNumber: "",
+    appointmentFor: "",
   });
+
   const navigate = useNavigate();
   let userData = JSON.parse(localStorage.getItem("userContext") || "null");
 
@@ -49,7 +59,7 @@ export default function BookAppointment({
   };
   const currentDate = new Date();
   const currentYear = currentDate.getFullYear();
-  React.useEffect(() => {
+  useEffect(() => {
     if (!appointment) {
       navigate("/");
     }
@@ -61,24 +71,46 @@ export default function BookAppointment({
         month: currentMonth.toString().padStart(2, "0"),
       };
     });
+    setPatientDetails((prev) => {
+      return {
+        ...prev,
+        fullName: `${userData?.user?.firstName || ""} ${
+          userData?.user?.lastName || ""
+        }`,
+        contactNumber: userData?.user?.contactNumber,
+        appointmentFor: "mySelf",
+      };
+    });
   }, []);
 
   const validationPatterns = {
     cardNumber: /\b\d{16}\b/g,
     cvv: /^\d{4}$/,
+    contactNumber: /^[0-9]{10}$/,
   };
   const validationMessages = {
     cardNumber: "Please enter a valid 16 digit card Number",
     cvv: "Please enter a valid security code",
+    contactNumber: "Please enter a valid 10-digit mobile number!",
+    fullName: "Please enter a valid patient name!",
   };
 
   const validateInput = (e) => {
     let { name, value } = e.target;
+
     setPaymentErrors((prev) => {
       const stateObj = { ...prev, [name]: "" };
-      const validationPattern = validationPatterns[name];
-      if (validationPattern && !validationPattern.test(value)) {
-        stateObj[name] = validationMessages[name];
+      if (name === "fullName") {
+        if (!value) {
+          stateObj[name] = validationMessages[name];
+        } else {
+          stateObj[name] = "";
+        }
+      } else {
+        const validationPattern = validationPatterns[name];
+        if (validationPattern && !validationPattern.test(value)) {
+          stateObj[name] = validationMessages[name];
+        }
       }
       return stateObj;
     });
@@ -103,6 +135,35 @@ export default function BookAppointment({
       );
     }
     navigate("/appointments");
+  };
+
+  const handlePatientDetailsForm = (e) => {
+    const { name, value } = e.target;
+    if (name === "appointmentFor") {
+      if (e.target.value === "someoneElse") {
+        setPatientDetails({
+          fullName: "",
+          contactNumber: "",
+          [name]: value,
+        });
+        setPaymentErrors(bookAppointmentErrors);
+      } else {
+        setPatientDetails((prev) => ({
+          ...prev,
+          fullName: `${userData?.user?.firstName || ""} ${
+            userData?.user?.lastName || ""
+          }`,
+          contactNumber: userData?.user?.contactNumber,
+          [name]: "mySelf",
+        }));
+        setPaymentErrors(bookAppointmentErrors);
+      }
+    } else {
+      setPatientDetails((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
 
   return (
@@ -146,14 +207,20 @@ export default function BookAppointment({
           {activeStep === 0 ? (
             <>
               <Typography variant="h4">Patient Details</Typography>
-              <PatientDetails userData={userData} appointment={appointment} />
+              <PatientDetails
+                patientDetails={patientDetails}
+                handlePatientDetailsForm={handlePatientDetailsForm}
+                appointment={appointment}
+                paymentErrors={paymentErrors}
+                validateInput={validateInput}
+              />
             </>
           ) : activeStep === 1 ? (
             <>
               <Typography variant="h4">Appointment Details</Typography>
               <AppointmentDetails
                 appointment={appointment}
-                userData={userData}
+                patientDetails={patientDetails}
               />
             </>
           ) : (
@@ -197,6 +264,11 @@ export default function BookAppointment({
                       !paymentData.cvv ||
                       paymentErrors.cardNumber ||
                       paymentErrors.cvv
+                    : activeStep === 0
+                    ? paymentErrors.fullName ||
+                      paymentErrors.contactNumber ||
+                      !patientDetails.fullName ||
+                      !patientDetails.contactNumber
                     : false
                 }
                 onClick={() => {
