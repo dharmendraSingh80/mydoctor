@@ -36,6 +36,15 @@ export default function Qualifications({ mobileOpen, handleDrawerToggle }) {
     setEditing(!editing);
   };
 
+  const handleCancelClick = () => {
+    // if (editData[0] && Object.keys(editData[0]).length === 0) {
+    //   setEditData([]);
+    // }
+    setEditData(userData?.user?.profile?.qualifications || []);
+    // fetchData();
+    setEditing(false);
+  };
+
   const addMorePaper = () => {
     setEditData([...editData, {}]);
   };
@@ -238,7 +247,7 @@ export default function Qualifications({ mobileOpen, handleDrawerToggle }) {
                     <Button
                       sx={{ height: "40px", mr: "10px" }}
                       variant="contained"
-                      onClick={handleEditClick}
+                      onClick={handleCancelClick}
                     >
                       CANCEL
                     </Button>

@@ -74,9 +74,10 @@ export default function ExperienceDocotr({
     setEditing(true);
   };
   const handleCancelClick = () => {
-    if (editData[0] && Object.keys(editData[0]).length === 0) {
-      setEditData([]);
-    }
+    // if (editData[0] && Object.keys(editData[0]).length === 0) {
+    //   setEditData([]);
+    // }
+    setEditData(userData?.user?.profile?.experience || []);
     setEditing(false);
   };
 
