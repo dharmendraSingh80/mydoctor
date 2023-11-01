@@ -43,11 +43,12 @@ export default function Specialities({ speciality, totalSpeciality }) {
   const displayedSpecialities = showSpecialities.slice(startIndex, endIndex);
   useEffect(() => {
     setShowSpecialities(speciality);
-    const timeout = setTimeout(() => {
-      setLoading(false);
-    }, 2000);
+    // const timeout = setTimeout(() => {
+    //   setLoading(false);
+    // }, 2000);
 
-    return () => clearTimeout(timeout);
+    // return () => clearTimeout(timeout);
+    setLoading(false);
   }, [speciality]);
 
   const handleSearch = () => {

@@ -174,7 +174,7 @@ export default function DoctorProfile({
           return;
         }
 
-        setSelectedImage(imageData.avatar.buffer);
+        setSelectedImage(imageData?.avatar?.buffer);
 
         if (doctorData.email) {
           const defaultEditData = {
